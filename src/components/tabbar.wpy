@@ -1,0 +1,103 @@
+<style lang="less">
+  .menu-item3{
+    width: 32%;
+    float: left;
+    text-align: center;
+    /*padding-top: 8px;*/
+  }
+  .menu-item2{
+    width: 50%;
+    float: left;
+    text-align: center;
+    /*padding-top: 8px;*/
+  }
+  .menu-item1{
+    width: 100%;
+    float: left;
+    text-align: center;
+    /*padding-top: 8px;*/
+  }
+  .img{
+    width: 42rpx;
+    height: 42rpx;
+    display: block;
+    margin:auto;
+    margin-top: 16rpx;
+  }
+  .name{
+    font-size: 20rpx;
+    display: block;
+    margin-top: 1rpx;
+  }
+  .clear{
+    clear: both;
+  }
+  .tab-bar{
+    background: #FFFFFF;
+    position: fixed;
+    width: 100%;
+    /*padding: 0px 2%;*/
+    height: 97rpx;
+  }
+</style>
+<template name="tabBar">
+  <view class="tab-bar" style="color: {{tabBar.color}}; background: {{tarBar.backgroundColor}}; {{tabBar.position=='top'? 'top: 0' : 'bottom: 0'}}; {{tabBar.borderStyle? (tabBar.position=='top'? 'border-bottom: solid 1px '+tabBar.borderStyle + ';' : 'border-top: solid 1rpx '+tabBar.borderStyle + ';') : ''}}">
+    <block wx:for="{{tabBar.list}}" wx:key="pagePath" >
+      <view @tap="itemClick({{item}})" class="{{item.clas}}" style="{{item.active? 'color: '+(item.selectedColor? item.selectedColor : tabBar.selectedColor) : ''}}">
+        <image src="{{item.selectedIconPath}}" wx:if="{{item.active}}" class="img"></image>
+        <image src="{{item.iconPath}}" wx:if="{{!item.active}}" class="img"></image>
+        <text class="name">{{item.text}}</text>
+      </view>
+    </block>
+    <view class="clear"></view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class tabbar extends wepy.component {
+    config = {
+      navigationBarTitleText: 'tabbar'
+    };
+    components = {};
+
+    // mixins = [testMixin];
+
+    data = {
+      tabBar: wepy.$instance.globalData.tabBar,
+    };
+
+    computed = {//计算
+
+    };
+
+    methods = {//UI交互方法
+      itemClick(item){
+        if (!item.active) {
+          wepy.$instance.globalData.tabBar.list.map((tab) =>{
+            tab.active = false
+            if (tab.text==item.text) {
+              tab.active = true
+            }
+          })
+          //console.log(item)
+          wepy.redirectTo({
+            url:item.pagePath
+          })
+        }
+      }
+
+    };
+
+    events = {//组件
+
+    };
+
+    onLoad() {
+      //console.log(this.data.tabBar)
+
+    }
+  }
+</script>

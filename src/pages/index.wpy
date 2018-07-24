@@ -1,0 +1,124 @@
+<style lang="less">
+  .img{
+    width: 100%;
+    height: 1190rpx;
+    display: block;
+
+  }
+  .btn{
+    height: 700rpx;
+    width: 1000rpx;
+    position: absolute;
+    bottom: 1rpx;
+    opacity: 0;
+    border: none;
+    background-color:transparent;
+
+  }
+</style>
+<template>
+  <view class="container">
+    <view v-if="userInfo">
+      <image class="img" src="/image/bgc.gif"></image>
+      <button open-type="getUserInfo" class="btn" bindgetuserinfo="getUserInfo"></button>
+    </view>
+    <view></view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+  import Panel from '@/components/panel' // alias example
+  import Counter from 'counter' // alias example
+  import List from '../components/list' // aliasFields example
+  import moduleA from 'module-a' // aliasFields ignore module example
+  import Group from '../components/group'
+  import tabbar from '../components/tabbar'
+  import Toast from 'wepy-com-toast'
+  import testMixin from '../mixins/test'
+  import { ADD_PRICE } from '@/store/types/counter'
+
+  console.log('moduleA ignored: ', moduleA) // => moduleA ignored: {}
+
+  @connect({
+    num (state) {
+      //console.log(state)
+      return state.counter.num
+    },
+    asyncNum (state) {
+      return state.counter.asyncNum
+    },
+    sumNum (state) {
+      return state.counter.num + state.counter.asyncNum
+    },
+    getPric (state) {
+      //console.log(state)
+      return state.counter.price
+    }
+  },{
+     // addPrice:ADD_PRICE
+  })
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '日常食食'
+    }
+    components = {
+      panel: Panel,
+      counter1: Counter,
+      counter2: Counter,
+      list: List,
+      group: Group,
+      toast: Toast,
+      tabbar:tabbar
+    }
+
+    mixins = [testMixin]
+
+    data = {
+      userInfo:null,
+    }
+
+    computed = {
+
+    }
+
+    methods = {
+      getUserInfo(){
+        wepy.getUserInfo({
+          success (res) {
+            console.log(res)
+            wepy.setStorageSync('userInfo', res.userInfo)
+            wepy.$instance.globalData.userInfo = res.userInfo
+            let self = this
+            var url= wepy.$instance.globalData.tabBar.list[0].pagePath
+            wepy.redirectTo({
+              url:url
+            })
+          },
+          fail (res) {
+            console.log(res)
+          }
+        })
+      }
+
+    }
+
+    events = {
+
+    }
+
+    onLoad() {
+      let self = this
+      var url= wepy.$instance.globalData.tabBar.list[0].pagePath
+      if (wepy.getStorageSync('userInfo')) {
+        self.userInfo = wepy.getStorageSync('userInfo')
+        // wepy.redirectTo({
+        //   url:url
+        // })
+      }
+    }
+  }
+</script>

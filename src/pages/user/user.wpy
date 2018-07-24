@@ -1,0 +1,39 @@
+<style lang="less">
+
+</style>
+<template>
+  <view>
+    <view>
+      我的
+    </view>
+    <tabbar></tabbar>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import tabbar from '@/components/tabbar'
+  export default class user extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的'
+    };
+    components = {
+      tabbar:tabbar
+    };
+
+    // mixins = [testMixin];
+
+    data = {};
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>

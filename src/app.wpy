@@ -1,0 +1,133 @@
+<style lang="less">
+/*.container {*/
+  /*height: 100%;*/
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  /*align-items: center;*/
+  /*justify-content: space-between;*/
+  /*box-sizing: border-box;*/
+/*}*/
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+wepy.$store = store
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/index',
+      'pages/groupBuying/groupBuying',
+      'pages/secondkill/secondkill',
+      'pages/user/user'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black'
+    }
+  }
+
+  globalData = {
+    base_url:'http//:ec-api.shinho.net.cn:6005/default/index',
+    version_no:'v1',
+    rpc_host:'10.211.1.145',
+    userInfo: null,
+    tabBar: {
+      "color": "#9E9E9E",
+      "selectedColor": "#f00",
+      "backgroundColor": "#fff",
+      "borderStyle": "#ccc",
+      "list": [
+        {
+          "pagePath": "/pages/groupBuying/groupBuying",
+          "text": "团购",
+          "iconPath": "/image/tabbar/groupBuying_A.png",
+          "selectedIconPath": "/image/tabbar/groupBuying_B.png",
+          "clas":"menu-item",
+          "selectedColor": "#3f2121",
+          active: true
+        },
+        {
+          "pagePath": "/pages/secondkill/secondkill",
+          "text": "秒杀",
+          "iconPath": "/image/tabbar/secondkill_A.png",
+          "selectedIconPath": "/image/tabbar/secondkill_B.png",
+          "selectedColor": "#3f2121",
+          "clas": "menu-item",
+          active: false
+        },
+        {
+          "pagePath": "/pages/user/user",
+          "text": "我的",
+          "iconPath": "/image/tabbar/user_A.png",
+          "selectedIconPath": "/image/tabbar/user_B.png",
+          "selectedColor": "#3f2121",
+          "clas": "menu-item",
+          active: false
+        }
+      ],
+      "position": "bottom"
+    },
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+  }
+
+  onLaunch() {
+    //this.testAsync()
+    this.setTabBar()//设置tabbar
+    //this.getUserInfo()
+  }
+  //设置tabbar状态的底部
+  setTabBar () {
+    const  tabBarList = this.globalData.tabBar.list.length
+    this.globalData.tabBar.list.map((item,index) =>{
+      item.active = false
+      item.clas = 'menu-item'+tabBarList
+      if (index==0) {
+        item.active = true
+      }
+    })
+  }
+  sleep (s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved')
+      }, s * 1000)
+    })
+  }
+
+  async testAsync () {
+    const data = await this.sleep(3)
+    console.log(data)
+  }
+
+  getUserInfo(cb) {
+    const that = this
+    // if (this.globalData.userInfo) {
+    //   return this.globalData.userInfo
+    // }
+    console.log('123')
+    wepy.getUserInfo({
+      success (res) {
+        //console.log(res)
+        that.globalData.userInfo = res.userInfo
+         // cb && cb(res.userInfo)
+      },
+      fail (res) {
+        //console.log(res)
+      }
+    })
+  }
+}
+</script>

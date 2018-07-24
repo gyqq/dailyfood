@@ -1,0 +1,42 @@
+<style lang="less">
+.groupBuying{
+  padding-bottom:97rpx;
+}
+</style>
+<template>
+  <view>
+    <view class="groupBuying">
+      团购
+    </view>
+    <tabbar></tabbar>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import tabbar from '@/components/tabbar'
+
+  export default class groupBuying extends wepy.page {
+    config = {
+      navigationBarTitleText: '团购'
+    };
+    components = {
+      tabbar:tabbar
+    };
+
+    //mixins = [testMixin];
+
+    data = {};
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>
