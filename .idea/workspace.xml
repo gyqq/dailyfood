@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="f20b5d4b-43db-4a12-88d3-f8c5eb9fc97b" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
+=======
+    <list default="true" id="f20b5d4b-43db-4a12-88d3-f8c5eb9fc97b" name="Default" comment="" />
+>>>>>>> Stashed changes
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -28,7 +32,11 @@
       <file leaf-file-name="text.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pages/groupBuying/text.vue">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="209">
+=======
+            <state relative-caret-position="305">
+>>>>>>> Stashed changes
               <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
             </state>
           </provider>
@@ -131,9 +139,15 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
+<<<<<<< Updated upstream
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="13" />
     <option name="y" value="23" />
+=======
+  <component name="ProjectFrameBounds">
+    <option name="x" value="31" />
+    <option name="y" value="24" />
+>>>>>>> Stashed changes
     <option name="width" value="1440" />
     <option name="height" value="877" />
   </component>
@@ -223,6 +237,7 @@
       <option name="project" value="LOCAL" />
       <updated>1532398827234</updated>
     </task>
+<<<<<<< Updated upstream
     <option name="localTasksCounter" value="2" />
     <servers />
   </component>
@@ -231,12 +246,40 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
+=======
+    <task id="LOCAL-00002" summary="测试">
+      <created>1532399447193</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1532399447193</updated>
+    </task>
+    <task id="LOCAL-00003" summary="测试">
+      <created>1532402064583</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1532402064583</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="45367000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="31" y="24" width="1440" height="877" extended-state="0" />
+>>>>>>> Stashed changes
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+<<<<<<< Updated upstream
       <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.32876712" />
+=======
+      <window_info anchor="bottom" id="Version Control" order="7" visible="true" weight="0.21295144" />
+>>>>>>> Stashed changes
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -555,7 +598,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pages/groupBuying/text.vue">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="209">
+=======
+        <state relative-caret-position="305">
+>>>>>>> Stashed changes
           <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
         </state>
       </provider>
