@@ -25,7 +25,7 @@
 
     events = {};
 
-    onLoad() {//开发分支 开发下
+    onLoad() {//开发分支 开发下 hehe
 
     }
   }
