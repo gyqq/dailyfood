@@ -88,6 +88,7 @@
     methods = {
       getUserInfo(){
         wepy.getUserInfo({
+          //获取信息
           success (res) {
             console.log(res)
             wepy.setStorageSync('userInfo', res.userInfo)
