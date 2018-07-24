@@ -25,7 +25,7 @@
 
     events = {};
 
-    onLoad() {
+    onLoad() {//开发分支
 
     }
   }
