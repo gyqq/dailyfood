@@ -1,0 +1,32 @@
+<style lang="less">
+
+</style>
+<template>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class login extends wepy.page {
+    config = {
+      navigationBarTitleText: 'login'
+    };
+    components = {};
+
+    mixins = [testMixin];
+
+    data = {};
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>

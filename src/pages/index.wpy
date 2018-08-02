@@ -116,9 +116,9 @@
       var url= wepy.$instance.globalData.tabBar.list[0].pagePath
       if (wepy.getStorageSync('userInfo')) {
         self.userInfo = wepy.getStorageSync('userInfo')
-        // wepy.redirectTo({
-        //   url:url
-        // })
+        wepy.redirectTo({
+          url:url
+        })
       }
     }
   }
