@@ -9,6 +9,7 @@
       团购
     </view>
     <tabbar></tabbar>
+    <login :isShow.sync="loginshow"></login>
   </view>
 </template>
 
@@ -16,18 +17,22 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import tabbar from '@/components/tabbar'
+  import login from '@/components/login/login'
 
   export default class groupBuying extends wepy.page {
     config = {
       navigationBarTitleText: '团购'
     };
     components = {
-      tabbar:tabbar
+      tabbar:tabbar,//导航栏
+      login:login//登录
     };
 
     //mixins = [testMixin];
 
-    data = {};
+    data = {
+       loginshow:false
+    };
 
     computed = {};
 
@@ -36,7 +41,13 @@
     events = {};
 
     onLoad() {
-
+      var loginInfo = wepy.getStorageSync('loginInfo')
+      if (!loginInfo) {
+        console.log('登录')
+        this.loginshow = true
+        this.$apply()
+      }
+      console.log(this.loginshow)
     }
   }
 </script>

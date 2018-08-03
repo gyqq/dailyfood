@@ -1,4 +1,4 @@
-<style lang="less">
+<style lang="css">
 /*.container {*/
   /*height: 100%;*/
   /*display: flex;*/
@@ -7,11 +7,15 @@
   /*justify-content: space-between;*/
   /*box-sizing: border-box;*/
 /*}*/
+/*设置wepy-com-toast字体大小*/
+.wetoast .wetoast__bd .wetoast__bd__title{
+  font-size: 30rpx;
+}
 </style>
-
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
+
 
 import { setStore } from 'wepy-redux'
 import configStore from './store'
@@ -36,10 +40,13 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    base_url:'http//:ec-api.shinho.net.cn:6005/default/index',
-    version_no:'v1',
-    rpc_host:'10.211.1.145',
-    userInfo: null,
+    //base_url:'https://ec-api.shinho.net.cn/',//测试
+    version_no:'v1',//测试
+    rpc_host:'10.211.1.145',//测试
+
+    base_url:'https://api.shinshop.com/',//正式
+    userInfo: null,//微信个人信息
+    loginInfo:null,//登陆后的个人信息
     tabBar: {
       "color": "#9E9E9E",
       "selectedColor": "#f00",

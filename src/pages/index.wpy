@@ -22,7 +22,6 @@
       <image class="img" src="/image/bgc.gif"></image>
       <button open-type="getUserInfo" class="btn" bindgetuserinfo="getUserInfo"></button>
     </view>
-    <view></view>
 
   </view>
 </template>
@@ -91,8 +90,8 @@
           //获取信息
           success (res) {
             console.log(res)
-            wepy.setStorageSync('userInfo', res.userInfo)
-            wepy.$instance.globalData.userInfo = res.userInfo
+            wepy.setStorageSync('userInfo', res)
+            wepy.$instance.globalData.userInfo = res
             let self = this
             var url= wepy.$instance.globalData.tabBar.list[0].pagePath
             wepy.redirectTo({
@@ -103,7 +102,8 @@
             console.log(res)
           }
         })
-      }
+      },
+
 
     }
 
@@ -120,6 +120,8 @@
           url:url
         })
       }
+
+
     }
   }
 </script>

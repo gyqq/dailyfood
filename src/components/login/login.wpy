@@ -1,32 +1,382 @@
 <style lang="less">
+.bag{
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  background-color:rgb(232,238,239);
+  height:1210rpx;
+  width: 100%;
+}
+.view-top{
+  padding-bottom: 80rpx;
+}
+.view-top text:nth-child(1){
+  font-size: 38rpx;
+  margin-left: 10rpx;
+}
+.view-top text:nth-child(2){
+  font-size: 28rpx;
+  margin-left: 260rpx;
+  color: rgb(135,135,135);
+}
+/* 注册弹框 */
 
+.modal-body {
+  position: absolute;
+  top: 200rpx;
+  left: 80rpx;
+  height: 490rpx;
+  width: 550rpx;
+  background-color: white;
+  z-index: 10;
+  padding: 20rpx;
+}
+.form-body{
+  width: 90%;
+  margin: 0 auto;
+}
+.modal-body .modal_title {
+  text-align: center;
+  font-weight: 700;
+  margin: 20rpx;
+  height: 54rpx;
+}
+
+/*.close {*/
+  /*color: white;*/
+  /*position: relative;*/
+  /*width: 60rpx;*/
+  /*height: 60rpx;*/
+  /*line-height: 50rpx;*/
+  /*text-align: center;*/
+  /*background-color: #f4a24b;*/
+  /*border-radius: 50%;*/
+  /*top: -117rpx;*/
+  /*right: -465rpx;*/
+/*}*/
+
+.modal-content {
+  border-radius: 10rpx;
+}
+
+.itemView {
+  margin: 30rpx 0;
+}
+
+.input {
+  margin: 20rpx;
+  height: 80rpx;
+  background-color: #ffffff;
+  border-radius: 5rpx;
+  padding-left: 20rpx;
+  border: 1rpx solid #f0eff5;
+  color: #96959a;
+  font-size: 24rpx;
+}
+
+.placeholder {
+  color: #96959a;
+  font-size: 24rpx;
+}
+
+.knowBtn {
+  color: white;
+  height: 90rpx;
+  line-height: 90rpx;
+  border: none;
+  margin-top: 50rpx;
+  background-color: rgb(135,135,135);
+  border-radius: 10rpx;
+  /*background: linear-gradient(#f4a24b, #f2bc4d);*/
+}
+
+.sendCode::after {
+  /*border: none;*/
+  border-left: 2rpx solid #96959a;
+}
+
+.sendCode {
+  display: block;
+  list-style-type: none;
+  height: 50rpx;
+  line-height: 50rpx;
+  width: 156rpx;
+  font-size: 24rpx;
+  color: rgb(135,135,135);
+  position: relative;
+  top: -84rpx;
+  left: 500rpx;
+  z-index: 12;
+  background-color: #ffff;
+}
+.loginType{
+  margin-top: 10rpx;
+}
+.loginType text:nth-child(1){
+  font-size: 22rpx;
+  color:rgb(135,135,135) ;
+  width: 390rpx;
+  float: left;
+  margin-left: 25rpx;
+  margin-top: -50rpx;
+}
+.loginType text:nth-child(2){
+  font-size: 22rpx;
+  color:#f2bc4d;
+  width: 170rpx;
+  float: right;
+  margin-right: 25rpx;
+  margin-top: -50rpx;
+}
 </style>
-<template>
+<template name="login">
+  <view wx:if="{{isShow}}" class="bag">
+    <view class="view-top">
+      <text @tap='closeLogin'>x</text>
+      <text>{{loginType==1?'手机验证码登录':'密码登录'}}</text>
+    </view>
+    <!-- 验证码登录 -->
+    <view class="form-body" wx:if="{{loginType==1}}">
+      <form class="modal-content">
+        <view class="itemView">
+          <input class="input" maxlength="11"  type="number" bindinput="userNumberInput" value="{{loginIfo.username}}" placeholder="请输入手机号" placeholder-class="placeholder" />
+        </view>
+        <view class="itemView">
+          <input class="input" value="{{loginIfo.password}}" name="userCode" bindinput="userCodeInput" placeholder="请输入验证码" placeholder-class="placeholder" />
+          <text  style="border:0;" class='sendCode' disabled='{{disabled}}' bindtap="sendCode">{{sendCodeMsg}}</text>
+          <view class="loginType">
+            <text>首次用手机号登录将自动为您注册</text>
+            <text @tap="changeLoginType(2)" style="margin-right: -30rpx">密码登录</text>
+          </view>
+        </view>
+        <view class="itemView">
+          <button class="knowBtn input" @tap="makeSure(1)">确定</button>
+        </view>
+      </form>
+    </view>
+    <!-- 密码登录 -->
+    <view class="form-body" wx:if="{{loginType==2}}">
+      <form class="modal-content">
+        <view class="itemView">
+          <input class="input"  type="text" bindinput="userNumberInput" value="{{loginIfo.username}}" placeholder="请输入用户名/手机号" placeholder-class="placeholder" />
+        </view>
+        <view class="itemView">
+          <input class="input" password="{{seeType}}" value="{{loginIfo.password}}" name="userCode" bindinput="userCodeInput" placeholder="请输入密码" placeholder-class="placeholder" />
+          <view @tap="seeChange" class="sendCode" style="left: 580rpx;width: 60rpx;border-left:2rpx solid rgb(125,125,125);padding-left: 14rpx">
+            <image  style="width: 40rpx;height: 40rpx;margin-top: 9rpx" src="{{loginIfo.eyesImage}}"></image>
+          </view>
+          <view class="loginType">
+            <text></text>
+            <text style="color: green" @tap="changeLoginType(1)">手机验证码登录</text>
+          </view>
+        </view>
+        <view class="itemView">
+          <button class="knowBtn input" @tap="makeSure(2)">确定</button>
+        </view>
+      </form>
+    </view>
 
+    <toast />
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-
-  export default class login extends wepy.page {
+  import Toast from 'wepy-com-toast';
+  export default class login extends wepy.component {
     config = {
       navigationBarTitleText: 'login'
     };
-    components = {};
+    components = {
+      toast: Toast
+    };
 
-    mixins = [testMixin];
+    mixins = [];
 
-    data = {};
+    data = {
+      globalData:wepy.$instance.globalData,
+      sendCodeMsg:'发送验证码',
+      currentTime:60,
+      intervalTime:'',
+      disabled:false,
+      loginType:1,//1验证码登录  2密码登录
+
+      seeType:true,//false查看  true非查看
+      loginIfo:{//
+        //_method:'POST',
+        eyesImage:'../../image/icon/icon-CloseEyes.png',
+        grant_type:'password',
+        username:'',
+        password:'',//密码
+        client_id:'yimishiji_app',
+        client_secret:'guHIwAcXb2onDCzWEjrX05Ej08QZR9rb',
+        //device_model:'',//手机品牌
+        language:'simplified_chinese',
+        platform:'wx_program',//平台
+        suppress_response_code:true,
+        type:'Verification'
+        //system_version:'11.3',//系统版本
+
+        // version:'',//项目版本
+      }
+    };
+    props = {
+      isShow: true
+    };
 
     computed = {};
 
-    methods = {};
+    methods = {
+      userNumberInput: function (e) {
+        this.loginIfo.username = e.detail.value
+      },
+      userCodeInput: function (e) {
+        this.loginIfo.password = e.detail.value
+      },
+      sendCode(){//发送验证码(10分钟三条,一天10条)
+        var that =this
+        if (that.disabled) {
+          return false
+        }
+        var phone = this.isPhoneNo(this.loginIfo.username)
+        if (!phone) {
+          wx.showToast({
+            title: '请输入正确手机号',
+            image: '../../image/icon/error-icon.png',
+            duration: 1000,
+            mask: true
+          })
+          return false
+        }
+        that.sendCodeMsg = 60+'秒'
+        that.disabled = false
+        // 点击之后倒数验证码
+        var currentTime = that.currentTime
+        var intervalTime = setInterval(function () {
+          currentTime--;
+          that.sendCodeMsg = currentTime + '秒'
+          that.intervalTime = intervalTime
+          that.disabled = true
+          if (currentTime <= 0) {
+            clearInterval(intervalTime)
+            that.sendCodeMsg = '发送验证码'
+            that.currentTime = 60
+            that.disabled = false
+            that.intervalTime = intervalTime
+          }
+          that.$apply();
+        }, 1000)
 
+        var URL = wepy.$instance.globalData
+        wepy.request({
+          url:URL.base_url+URL.version_no+'/verifications/mobile_sms_code?mobile='+this.loginIfo.username+'&type=m_login',
+          method: "get",
+          header: {
+             "Content-Type": "application/json; charset=UTF-8"  //post
+          },
+          success: function(res) {
+            console.log(res)
+            var res  =res.data
+            wepy.showToast({
+              title: res.status_txt,
+              icon: 'success',
+              duration: 2000
+            })
+
+          }
+        })
+
+      },
+      makeSure(type){//确定
+        var self =this
+        var loginIfo = this.loginIfo
+
+        if (loginIfo.username=='' || loginIfo.password=='') {//密码账号填写
+          wepy.showToast({
+            title: '请正确填写信息',
+            image: '../../image/icon/error-icon.png',
+            duration: 2000
+          })
+          return false
+        }
+        var data = {
+          grant_type:loginIfo.grant_type,
+          username:loginIfo.username,
+          password:loginIfo.password,
+          client_id:loginIfo.client_id,
+          client_secret:'guHIwAcXb2onDCzWEjrX05Ej08QZR9rb',
+          refresh_token:'123123',
+          suppress_response_code:true,
+
+        }
+        if (type==1) {//验证码登录需要加
+          data.type = 'Verification'
+        }
+        var url = self.globalData.base_url+'oauth2/token'
+        // console.log(url)
+         console.log(data)
+        wepy.request({
+          url:url,
+          method: "POST",
+          data:data,
+          header: {
+            "Content-Type": "application/json; charset=UTF-8"  //post
+          },
+          success: function(res) {
+            console.log(res)
+            var res = res.data
+            if (res.message){//登陆错误
+              self.$invoke('toast', 'show', {
+                title: res.message,
+                // img: '../../image/icon/error-icon.png',
+              });
+            }else {
+              wepy.setStorageSync('loginInfo', res)
+              wepy.showToast({
+                title: '登陆成功',
+                icon: 'success',
+                duration: 2000
+              })
+              self.isShow = false
+              self.$apply();
+              console.log(self.isShow)
+            }
+
+          }
+        })
+      },
+      closeLogin(){
+        console.log('关闭')
+        this.isShow = false
+      },
+      seeChange(){//密码查看变化
+        this.seeType = !this.seeType
+        console.log(this.seeType)
+        if (this.seeType){//禁止查看
+          this.loginIfo.eyesImage = '../../image/icon/icon-CloseEyes.png'
+        }else {//可以查看
+          this.loginIfo.eyesImage = '../../image/icon/icon-OpenEyes.png'
+        }
+      },
+      changeLoginType(type){//登录方式切换
+        console.log(type)
+        this.seeType = true
+        this.loginIfo.eyesImage = '../../image/icon/icon-CloseEyes.png'
+        this.loginIfo.username = ''
+        this.loginIfo.password = ''
+        this.loginType = type
+      },
+    };
+    isPhoneNo(phone){//验证手机号
+      var pattern = /^1[345678]\d{9}$/;
+      return pattern.test(phone);
+    }
     events = {};
 
     onLoad() {
-
+      console.log('登录弹出')
+      console.log(this.isShow)
     }
   }
 </script>
