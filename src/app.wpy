@@ -40,11 +40,11 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    //base_url:'https://ec-api.shinho.net.cn/',//测试
+    base_url:'https://ec-api.shinho.net.cn/',//测试
     version_no:'v1',//测试
     rpc_host:'10.211.1.145',//测试
 
-    base_url:'https://api.shinshop.com/',//正式
+    // base_url:'https://api.shinshop.com/',//正式
     userInfo: null,//微信个人信息
     loginInfo:null,//登陆后的个人信息
     tabBar: {

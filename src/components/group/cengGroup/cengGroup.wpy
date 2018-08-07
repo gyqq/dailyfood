@@ -1,0 +1,93 @@
+<style lang="less" scoped>
+  #cengGroup{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    background: rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    z-index: 10;
+  }
+#cengGroup .cengGroup-modal{
+  background-color: white;
+  width: 630rpx;
+  margin: 0 auto;
+  margin-top: 200rpx;
+  border-radius: 10rpx;
+  height: 400rpx;
+}
+#cengGroup .cengGroup-modal  .modal-top{
+  height:97rpx;
+  width: 100%;
+  line-height: 79rpx;
+}
+#cengGroup .cengGroup-modal  .modal-top text{
+  color: #3f2021;
+  font-size: 32rpx;
+  /*margin-left: 220rpx;*/
+  display: block;
+  float: left;
+  margin-left: 220rpx;
+  margin-top: 10rpx;
+}
+#cengGroup .cengGroup-modal  .modal-top image{
+  width: 40rpx;
+  height: 40rpx;
+  /*margin-left: 150rpx;*/
+  display: block;
+  float: right;
+  margin-right: 30rpx;
+  margin-top: 25rpx;
+}
+#cengGroup .cengGroup-modal .modal-body{
+  height: 200rpx;
+}
+</style>
+<template name="cengGroup">
+  <!--蹭团弹框-->
+  <view id="cengGroup" wx:if="{{GroupShow}}">
+    <view class="cengGroup-modal">
+      <view class="modal-top">
+        <text>选择要蹭的团</text>
+        <image @tap="closeBtn" src="../../../../image/icon/icon-close.png"></image>
+      </view>
+      <view class="modal-body">
+        <view>
+
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class cengGroup extends wepy.component {
+    config = {
+      navigationBarTitleText: 'cengGroup'
+    };
+    components = {};
+
+    mixins = [];
+
+    data = {};
+    props = {
+      GroupShow:true,
+    };
+    computed = {};
+
+    methods = {
+      closeBtn(){
+        this.GroupShow = false
+      },
+    };
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>

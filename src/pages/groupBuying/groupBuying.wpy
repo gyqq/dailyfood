@@ -1,15 +1,127 @@
-<style lang="less">
+<style lang="less" scoped>
+  page{
+    background-color: #f0eff5;
+  }
 .groupBuying{
   padding-bottom:97rpx;
+  /*background-color: #f0eff5;*/
 }
+.group-item{
+  /*height: 780rpx;*/
+  height: 800rpx;
+  width: 90%;
+  margin: 0 auto;
+  overflow: hidden;
+  margin-top: 30rpx;
+  background-color: white;
+  border-radius: 6rpx;
+}
+.group-item .item-one{
+  height: 460rpx;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+.group-item .item-one .item-discount{
+  position: absolute;
+  left: 0;
+  top:30rpx ;
+  color: white;
+  width: 140rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 36rpx;
+  /*font-weight: bolder;*/
+  border-top-right-radius:50rpx ;
+  border-bottom-right-radius:50rpx ;
+  background: red;
+  opacity: 0.8;
+}
+.group-item .item-one .item-img{
+  width: 100%;
+  height: 100%;
+}
+
+.group-item .item-two{
+  height: 320rpx;
+  margin: 0 auto;
+  padding-left: 30rpx;
+  padding-top: 10rpx;
+}
+.group-item .item-two .item-title{
+  font-size: 28rpx;
+  color: #3F2021;
+  padding-top: 20rpx;
+}
+.group-item .item-two .item-price{
+  padding-top: 32rpx;
+  padding-bottom: 40rpx;
+  overflow: auto;
+}
+.group-item .item-two .item-LPrice{
+  font-size: 28rpx;
+  font-weight: bolder;
+  color: #E60012;
+  width: 300rpx;
+  display: block;
+  float: left;
+}
+.group-item .item-two .item-LPrice text:nth-child(1){
+  font-weight: bolder;
+  font-size: 36rpx;
+  margin-left: 10rpx;
+}
+.group-item .item-two .item-RPrice{
+  font-weight: bolder;
+  margin-left: 100rpx;
+  font-size: 28rpx;
+  color: #3F2021;
+  display: block;
+  float: left;
+}
+.group-item .item-two .Btn{
+  width: 285rpx;
+  height: 76rpx;
+  font-size: 28rpx;
+  display: inline-block;
+}
+.group-item .item-two .Btn:nth-child(1){
+  color: white;
+  background-color:#b58151 ;
+}
+.group-item .item-two .Btn:nth-child(2){
+  color: white;
+  background-color:#3e2020 ;
+  margin-left: 60rpx;
+}
+/*团购单个*/
 </style>
 <template>
-  <view>
-    <view class="groupBuying">
-      团购
+  <view class="groupBuying">
+    <view>
+      <view class="group-item" wx:for="{{groupList}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+        <view class="item-one">
+          <view class="item-discount">{{item.discount}}</view>
+          <image class="item-img" src="{{item.img}}"></image>
+        </view>
+        <view class="item-two">
+          <view class="item-title">{{item.detectionTitel}}</view>
+          <view class="item-title">{{item.title}}</view>
+          <view class="item-price">
+            <text class="item-LPrice">{{item.numPeople}}人成团价<text>￥{{item.discountPrice}}</text></text>
+            <text class="item-RPrice">独享价￥{{item.ExclusivePrice}}</text>
+          </view>
+          <view>
+            <button class="Btn" @tap="cengGroupBtn({{item}})">去蹭团</button>
+            <button class="Btn" @tap="openGroupBtn({{item}})">立即开团</button>
+          </view>
+        </view>
+      </view>
     </view>
     <tabbar></tabbar>
     <login :isShow.sync="loginshow"></login>
+    <cengGroup :GroupShow.sync="GroupShow"></cengGroup>
   </view>
 </template>
 
@@ -18,25 +130,60 @@
   import { connect } from 'wepy-redux';
   import tabbar from '@/components/tabbar'
   import login from '@/components/login/login'
+  import cengGroup from '@/components/group/cengGroup/cengGroup'
 
   export default class groupBuying extends wepy.page {
     config = {
-      navigationBarTitleText: '团购'
+      navigationBarTitleText: '团购',
+      // navigationBarBackgroundColor:'#3e2020'
     };
     components = {
       tabbar:tabbar,//导航栏
-      login:login//登录
+      login:login,//登录
+      cengGroup:cengGroup,//蹭团
     };
 
     //mixins = [testMixin];
 
     data = {
-       loginshow:false
+      loginshow:false,
+      GroupShow:false,//蹭团
+      groupList:[//团购数据
+        {
+          groupId:1,
+          discount:'85折',//折扣
+          img:'http://www.shinshop.com/public/images/7e/dd/47/7d9b3200fabea9df7994a799d00f6063e6276c25.jpg?1531462901#w',//图片地址
+          detectionTitel:'59项零农残黄心大油桃',//检测标题
+          title:'刘叔家的油桃',//标题
+          numPeople:2,//人数
+          discountPrice:'36',//团构价
+          ExclusivePrice:'40',//独享价
+        },
+        {
+          groupId:1,
+          discount:'85折',//折扣
+          img:'http://www.shinshop.com/public/images/29/c4/95/426c772d426de748123639a53c535dc64673c06c.jpg?1528367125#h',
+          detectionTitel:'59项零农残黄心大油桃',//检测标题
+          title:'刘叔家的油桃',//标题
+          numPeople:2,//人数
+          discountPrice:'36',//团构价
+          ExclusivePrice:'40',//独享价
+        }
+      ],
     };
 
     computed = {};
 
-    methods = {};
+    methods = {
+      cengGroupBtn(item){//蹭团
+        console.log(item)
+        this.GroupShow = true
+      },
+      openGroupBtn(item){//开团
+        console.log(item)
+      },
+
+    };
 
     events = {};
 
@@ -47,7 +194,6 @@
         this.loginshow = true
         this.$apply()
       }
-      console.log(this.loginshow)
     }
   }
 </script>

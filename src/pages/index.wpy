@@ -18,10 +18,10 @@
 </style>
 <template>
   <view class="container">
-    <view v-if="userInfo">
-      <image class="img" src="/image/bgc.gif"></image>
-      <button open-type="getUserInfo" class="btn" bindgetuserinfo="getUserInfo"></button>
-    </view>
+    <!--<view v-if="userInfo">-->
+      <!--<image class="img" src="/image/bgc.gif"></image>-->
+      <!--<button open-type="getUserInfo" class="btn" bindgetuserinfo="getUserInfo"></button>-->
+    <!--</view>-->
 
   </view>
 </template>
@@ -85,25 +85,6 @@
     }
 
     methods = {
-      getUserInfo(){
-        wepy.getUserInfo({
-          //获取信息
-          success (res) {
-            console.log(res)
-            wepy.setStorageSync('userInfo', res)
-            wepy.$instance.globalData.userInfo = res
-            let self = this
-            var url= wepy.$instance.globalData.tabBar.list[0].pagePath
-            wepy.redirectTo({
-              url:url
-            })
-          },
-          fail (res) {
-            console.log(res)
-          }
-        })
-      },
-
 
     }
 
@@ -114,14 +95,9 @@
     onLoad() {
       let self = this
       var url= wepy.$instance.globalData.tabBar.list[0].pagePath
-      if (wepy.getStorageSync('userInfo')) {
-        self.userInfo = wepy.getStorageSync('userInfo')
-        wepy.redirectTo({
-          url:url
-        })
-      }
-
-
+      wepy.redirectTo({//跳转到底部第一个页面
+        url:url
+      })
     }
   }
 </script>

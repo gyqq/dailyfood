@@ -1,27 +1,27 @@
 <style lang="less">
-.bag{
+.login{
   position: absolute;
-  z-index: 100;
+  z-index: 10;
   top: 0;
   background-color:rgb(232,238,239);
   height:1210rpx;
   width: 100%;
 }
-.view-top{
+.login .view-top{
   padding-bottom: 80rpx;
 }
-.view-top text:nth-child(1){
+.login .view-top text:nth-child(1){
   font-size: 38rpx;
   margin-left: 10rpx;
 }
-.view-top text:nth-child(2){
+.login .view-top text:nth-child(2){
   font-size: 28rpx;
   margin-left: 260rpx;
   color: rgb(135,135,135);
 }
 /* 注册弹框 */
 
-.modal-body {
+.login .modal-body {
   position: absolute;
   top: 200rpx;
   left: 80rpx;
@@ -31,11 +31,11 @@
   z-index: 10;
   padding: 20rpx;
 }
-.form-body{
+.login .form-body{
   width: 90%;
   margin: 0 auto;
 }
-.modal-body .modal_title {
+.login .modal-body .modal_title {
   text-align: center;
   font-weight: 700;
   margin: 20rpx;
@@ -55,15 +55,15 @@
   /*right: -465rpx;*/
 /*}*/
 
-.modal-content {
+.login .modal-content {
   border-radius: 10rpx;
 }
 
-.itemView {
+.login .itemView {
   margin: 30rpx 0;
 }
 
-.input {
+.login .input {
   margin: 20rpx;
   height: 80rpx;
   background-color: #ffffff;
@@ -74,12 +74,12 @@
   font-size: 24rpx;
 }
 
-.placeholder {
+.login .placeholder {
   color: #96959a;
   font-size: 24rpx;
 }
 
-.knowBtn {
+.login .knowBtn {
   color: white;
   height: 90rpx;
   line-height: 90rpx;
@@ -90,7 +90,7 @@
   /*background: linear-gradient(#f4a24b, #f2bc4d);*/
 }
 
-.sendCode::after {
+.login .sendCode::after {
   /*border: none;*/
   border-left: 2rpx solid #96959a;
 }
@@ -109,10 +109,10 @@
   z-index: 12;
   background-color: #ffff;
 }
-.loginType{
+.login .loginType{
   margin-top: 10rpx;
 }
-.loginType text:nth-child(1){
+.login .loginType text:nth-child(1){
   font-size: 22rpx;
   color:rgb(135,135,135) ;
   width: 390rpx;
@@ -120,7 +120,7 @@
   margin-left: 25rpx;
   margin-top: -50rpx;
 }
-.loginType text:nth-child(2){
+.login .loginType text:nth-child(2){
   font-size: 22rpx;
   color:#f2bc4d;
   width: 170rpx;
@@ -130,7 +130,7 @@
 }
 </style>
 <template name="login">
-  <view wx:if="{{isShow}}" class="bag">
+  <view wx:if="{{isShow}}" class="login">
     <view class="view-top">
       <text @tap='closeLogin'>x</text>
       <text>{{loginType==1?'手机验证码登录':'密码登录'}}</text>
@@ -150,7 +150,7 @@
           </view>
         </view>
         <view class="itemView">
-          <button class="knowBtn input" @tap="makeSure(1)">确定</button>
+          <button open-type="getUserInfo" class="knowBtn input"   bindgetuserinfo="getUserInfo">确定</button>
         </view>
       </form>
     </view>
@@ -171,7 +171,8 @@
           </view>
         </view>
         <view class="itemView">
-          <button class="knowBtn input" @tap="makeSure(2)">确定</button>
+          <button open-type="getUserInfo" class="knowBtn input"   bindgetuserinfo="getUserInfo">确定</button>
+          <!--<button class="knowBtn input" @tap="makeSure(2)">确定</button>-->
         </view>
       </form>
     </view>
@@ -276,7 +277,7 @@
              "Content-Type": "application/json; charset=UTF-8"  //post
           },
           success: function(res) {
-            console.log(res)
+            //console.log(res)
             var res  =res.data
             wepy.showToast({
               title: res.status_txt,
@@ -288,61 +289,18 @@
         })
 
       },
-      makeSure(type){//确定
+
+      getUserInfo(){//获取用户信息
         var self =this
-        var loginIfo = this.loginIfo
-
-        if (loginIfo.username=='' || loginIfo.password=='') {//密码账号填写
-          wepy.showToast({
-            title: '请正确填写信息',
-            image: '../../image/icon/error-icon.png',
-            duration: 2000
-          })
-          return false
-        }
-        var data = {
-          grant_type:loginIfo.grant_type,
-          username:loginIfo.username,
-          password:loginIfo.password,
-          client_id:loginIfo.client_id,
-          client_secret:'guHIwAcXb2onDCzWEjrX05Ej08QZR9rb',
-          refresh_token:'123123',
-          suppress_response_code:true,
-
-        }
-        if (type==1) {//验证码登录需要加
-          data.type = 'Verification'
-        }
-        var url = self.globalData.base_url+'oauth2/token'
-        // console.log(url)
-         console.log(data)
-        wepy.request({
-          url:url,
-          method: "POST",
-          data:data,
-          header: {
-            "Content-Type": "application/json; charset=UTF-8"  //post
+        wepy.getUserInfo({
+          //获取信息
+          success (res) {
+            wepy.setStorageSync('userInfo', res)
+            wepy.$instance.globalData.userInfo = res
+            self.makeSure(self.loginType)
           },
-          success: function(res) {
+          fail (res) {
             console.log(res)
-            var res = res.data
-            if (res.message){//登陆错误
-              self.$invoke('toast', 'show', {
-                title: res.message,
-                // img: '../../image/icon/error-icon.png',
-              });
-            }else {
-              wepy.setStorageSync('loginInfo', res)
-              wepy.showToast({
-                title: '登陆成功',
-                icon: 'success',
-                duration: 2000
-              })
-              self.isShow = false
-              self.$apply();
-              console.log(self.isShow)
-            }
-
           }
         })
       },
@@ -352,7 +310,7 @@
       },
       seeChange(){//密码查看变化
         this.seeType = !this.seeType
-        console.log(this.seeType)
+        //console.log(this.seeType)
         if (this.seeType){//禁止查看
           this.loginIfo.eyesImage = '../../image/icon/icon-CloseEyes.png'
         }else {//可以查看
@@ -372,11 +330,69 @@
       var pattern = /^1[345678]\d{9}$/;
       return pattern.test(phone);
     }
+    makeSure(type){//确定
+      var self =this
+      var loginIfo = this.loginIfo
+
+      if (loginIfo.username=='' || loginIfo.password=='') {//密码账号填写
+        wepy.showToast({
+          title: '请正确填写信息',
+          image: '../../image/icon/error-icon.png',
+          duration: 2000
+        })
+        return false
+      }
+      var data = {
+        grant_type:loginIfo.grant_type,
+        username:loginIfo.username,
+        password:loginIfo.password,
+        client_id:loginIfo.client_id,
+        client_secret:'guHIwAcXb2onDCzWEjrX05Ej08QZR9rb',
+        refresh_token:'123123',
+        suppress_response_code:true,
+
+      }
+      if (type==1) {//验证码登录需要加
+        data.type = 'Verification'
+      }
+      var url = self.globalData.base_url+'oauth2/token'
+      // console.log(url)
+      console.log(data)
+      wepy.request({
+        url:url,
+        method: "POST",
+        data:data,
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          console.log(res)
+          var res = res.data
+          if (res.message){//登陆错误
+            self.$invoke('toast', 'show', {
+              title: res.message,
+              // img: '../../image/icon/error-icon.png',
+            });
+          }else {
+            wepy.setStorageSync('loginInfo', res)
+            wepy.showToast({
+              title: '登陆成功',
+              icon: 'success',
+              duration: 2000
+            })
+            self.isShow = false
+            self.$apply();
+            //console.log(self.isShow)
+          }
+
+        }
+      })
+    }
     events = {};
 
     onLoad() {
-      console.log('登录弹出')
-      console.log(this.isShow)
+      console.log('登录调用')
+      //console.log(this.isShow)
     }
   }
 </script>
