@@ -1,14 +1,15 @@
 <style lang="less">
 .login{
-  position: absolute;
-  z-index: 10;
+  position: fixed;
+  z-index: 20;
   top: 0;
   background-color:rgb(232,238,239);
-  height:1210rpx;
+  /*height:1210rpx;*/
+  height: 100%;
   width: 100%;
 }
 .login .view-top{
-  padding-bottom: 80rpx;
+  padding-bottom: 50rpx;
 }
 .login .view-top text:nth-child(1){
   font-size: 38rpx;
@@ -60,7 +61,7 @@
 }
 
 .login .itemView {
-  margin: 30rpx 0;
+  margin: 0rpx 0;
 }
 
 .login .input {
@@ -105,12 +106,12 @@
   color: rgb(135,135,135);
   position: relative;
   top: -84rpx;
-  left: 500rpx;
+  left: 490rpx;
   z-index: 12;
   background-color: #ffff;
 }
 .login .loginType{
-  margin-top: 10rpx;
+  margin-top: -35rpx;
 }
 .login .loginType text:nth-child(1){
   font-size: 22rpx;
@@ -118,7 +119,8 @@
   width: 390rpx;
   float: left;
   margin-left: 25rpx;
-  margin-top: -50rpx;
+  /*margin-top: -50rpx;*/
+
 }
 .login .loginType text:nth-child(2){
   font-size: 22rpx;
@@ -126,7 +128,7 @@
   width: 170rpx;
   float: right;
   margin-right: 25rpx;
-  margin-top: -50rpx;
+  /*margin-top: -50rpx;*/
 }
 </style>
 <template name="login">
@@ -214,7 +216,7 @@
         client_secret:'guHIwAcXb2onDCzWEjrX05Ej08QZR9rb',
         //device_model:'',//手机品牌
         language:'simplified_chinese',
-        platform:'wx_program',//平台
+        platform:'wx_mini_program',//平台
         suppress_response_code:true,
         type:'Verification'
         //system_version:'11.3',//系统版本
@@ -306,7 +308,8 @@
       },
       closeLogin(){
         console.log('关闭')
-        this.isShow = false
+        //this.isShow = false
+        this.$emit('closeLogin',false)
       },
       seeChange(){//密码查看变化
         this.seeType = !this.seeType
@@ -348,7 +351,7 @@
         password:loginIfo.password,
         client_id:loginIfo.client_id,
         client_secret:'guHIwAcXb2onDCzWEjrX05Ej08QZR9rb',
-        refresh_token:'123123',
+        // refresh_token:'123123',
         suppress_response_code:true,
 
       }
@@ -380,7 +383,8 @@
               icon: 'success',
               duration: 2000
             })
-            self.isShow = false
+           //self.isShow = false
+            self.$emit('closeLogin',false)
             self.$apply();
             //console.log(self.isShow)
           }
@@ -391,7 +395,7 @@
     events = {};
 
     onLoad() {
-      console.log('登录调用')
+      //console.log('登录调用')
       //console.log(this.isShow)
     }
   }

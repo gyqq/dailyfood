@@ -1,0 +1,222 @@
+<style lang="less">
+.img-list{
+  /*margin-bottom: 100rpx;*/
+  /*height: 1128rpx;*/
+  padding-bottom: 96rpx;
+}
+.img-list image{
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  margin-top: -11rpx;
+}
+.img-list image:nth-child(1){
+  margin-top: 0rpx;
+}
+.detal-bottom{
+  position: fixed;
+  bottom: 0;
+  height: 96rpx;
+  background: #ffffff;
+  width: 750rpx;
+}
+.detal-bottom .left{
+  float: left;
+  height: 96rpx;
+  line-height: 96rpx;
+}
+.detal-bottom .left:nth-child(1){
+  text-align: center;
+  width: 155rpx;
+}
+.detal-bottom .left:nth-child(1) image{
+  /*display: block;*/
+  width: 52rpx;
+  height: 52rpx;
+}
+.detal-bottom .left:nth-child(1) text{
+  font-size: 16rpx;
+  color: #959595;
+  display: block;
+  margin-top: -60rpx;
+}
+.detal-bottom .left:nth-child(2){
+  text-align: center;
+  width: 155rpx;
+}
+.detal-bottom .left:nth-child(2) image{
+  /*display: block;*/
+  width: 52rpx;
+  height: 52rpx;
+}
+.detal-bottom .left:nth-child(2) text{
+  font-size: 16rpx;
+  color: #959595;
+  display: block;
+  margin-top: -60rpx;
+}
+.detal-bottom .left:nth-child(3){
+  color: white;
+  font-size: 28rpx;
+  width: 220rpx;
+  text-align: center;
+  background-color: #3e2020;
+  float: right;
+}
+.detal-bottom .left:nth-child(4){
+  color: white;
+  font-size: 28rpx;
+  width: 220rpx;
+  text-align: center;
+  background-color: #b58151;
+  float: right;
+}
+</style>
+<template>
+  <view class="img-list">
+    <import src="../../../wxParse/wxParse.wxml"/>
+    <block>
+      <template is="wxParse" data="{{wxParseData:article.nodes}}"/>
+    </block>
+  </view>
+  <view class="detal-bottom">
+    <view class="left" @tap="backGroupListbtn">
+      <image src="/image/group/icon-groupList.png"></image>
+      <text>团购列表</text>
+    </view>
+    <view class="left" @tap="callService">
+      <image src="/image/group/icon-customerService.png"></image>
+      <text>联系客服</text>
+    </view>
+    <view class="left">
+      立即开团
+    </view>
+    <view class="left" @tap="cengGroupBtn">
+      去蹭团
+    </view>
+  </view>
+  <cengGroup :Group.sync="Group" catchtouchmove="ture"></cengGroup>
+  <!--</view>-->
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import WxParse from '../../../wxParse/wxParse.js'
+  import cengGroup from '@/components/group/cengGroup/cengGroup'
+
+  export default class groupDetails extends wepy.page {
+    config = {
+      navigationBarTitleText: '团购详情'
+    };
+    components = {
+      cengGroup:cengGroup
+    };
+
+    //mixins = [testMixin];
+
+    data = {
+      globalData:wepy.$instance.globalData,
+      options:null,
+      article:'',
+      groupDetail:{},//团购详情
+      Group:{
+        GroupShow:false,
+        groupId:''
+      },//蹭团
+    };
+
+    computed = {};
+
+    methods = {
+      wxParseImgTap(e) {//图片跳转
+        let that = this;
+        let nowImgUrl = e.target.dataset.src;
+        let tagFrom = e.target.dataset.from;
+        // if (typeof (tagFrom) != 'undefined' && tagFrom.length > 0) {
+        //   wx.previewImage({
+        //     current: nowImgUrl, // 当前显示图片的http链接
+        //     urls: that.data[tagFrom].imageUrls // 需要预览的图片http链接列表
+        //   })
+        // }
+      },
+      backGroupListbtn(){//团购列表
+        wepy.reLaunch({
+          url:'../groupBuying'
+        })
+      },
+      callService(){//联系客服
+        wx.navigateTo({
+          url: './../../webView/webView?url=' + 'https://shinhocloud.kf5.com/kchat/?lang=zh_CN&active_in_iframe=1#/chatbox'
+        })
+      },
+      cengGroupBtn(){//蹭团
+        //console.log(item)
+
+        if (this.judgeLogin()) {//已注册
+          //蹭团弹出
+          this.Group = {
+            GroupShow:true,
+            groupId:this.groupDetail.groupon_id
+          }
+          this.$invoke('cengGroup', "getcengGroupList",this.groupDetail.groupon_id);
+          this.$apply()
+        }else {//未注册
+          this.loginshow = true
+        }
+      },
+    };
+
+    events = {
+        'closeCengGroup':(param,even) =>{//蹭团关闭监听
+          //console.log(param)
+          this.Group = {
+            GroupShow:param,
+            groupId:''
+          }
+          // this.GroupShow = param
+          this.$apply()
+        },
+    };
+    judgeLogin(){//判断是否登陆
+      var loginInfo = wepy.getStorageSync('loginInfo')
+      if (loginInfo) {//已登录
+        return true
+      }else {
+        return false
+      }
+    }
+    getGroupList(){//获取团购列表
+      var self = this
+      var publicStr = wepy.$instance.getPublicData()
+      var access_token = wepy.getStorageSync('loginInfo').access_token ||''
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy'+publicStr
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          var img = ''
+          res.data.results.map((item) =>{
+            if (item.groupon_id==self.options.groupon_id){
+              img = item.intro
+              self.groupDetail = item
+            }
+          })
+          console.log(self.groupDetail)
+          WxParse.wxParse('article', 'html', img, self,1);
+          self.$apply()
+        }
+      })
+
+    }
+    onLoad(options) {
+      // console.log(options)
+      this.options = options
+      this.getGroupList()
+
+    }
+  }
+</script>

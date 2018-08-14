@@ -1,4 +1,4 @@
-<style lang="less" scoped>
+<style lang="less">
   page{
     background-color: #f0eff5;
   }
@@ -6,7 +6,14 @@
   padding-bottom:97rpx;
   /*background-color: #f0eff5;*/
 }
-.group-item{
+  /*.groupBuying #activeShow{*/
+    /*!*overflow: hidden;*!*/
+    /*!*height: 100%;*!*/
+    /*position: fixed;*/
+    /*top: 0;*/
+    /*width: 100%;*/
+  /*}*/
+.groupBuying .group-list .group-item{
   /*height: 780rpx;*/
   height: 800rpx;
   width: 90%;
@@ -16,13 +23,13 @@
   background-color: white;
   border-radius: 6rpx;
 }
-.group-item .item-one{
+.groupBuying .group-list .group-item .item-one{
   height: 460rpx;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
 }
-.group-item .item-one .item-discount{
+.groupBuying .group-list .group-item .item-one .item-discount{
   position: absolute;
   left: 0;
   top:30rpx ;
@@ -38,28 +45,30 @@
   background: red;
   opacity: 0.8;
 }
-.group-item .item-one .item-img{
+.groupBuying .group-list .group-item .item-one .item-img{
   width: 100%;
   height: 100%;
 }
 
-.group-item .item-two{
-  height: 320rpx;
+.groupBuying .group-list .group-item .item-two{
+  height: 330rpx;
   margin: 0 auto;
-  padding-left: 30rpx;
+  /*padding-left: 30rpx;*/
   padding-top: 10rpx;
 }
-.group-item .item-two .item-title{
+.groupBuying .group-list .group-item .item-two .item-title{
   font-size: 28rpx;
   color: #3F2021;
   padding-top: 20rpx;
+  padding-left: 30rpx;
 }
-.group-item .item-two .item-price{
+.groupBuying .group-list .group-item .item-two .item-price{
   padding-top: 32rpx;
   padding-bottom: 40rpx;
   overflow: auto;
+  padding-left: 30rpx;
 }
-.group-item .item-two .item-LPrice{
+.groupBuying .group-list .group-item .item-two .item-LPrice{
   font-size: 28rpx;
   font-weight: bolder;
   color: #E60012;
@@ -67,12 +76,12 @@
   display: block;
   float: left;
 }
-.group-item .item-two .item-LPrice text:nth-child(1){
+.groupBuying .group-list .group-item .item-two .item-LPrice text:nth-child(1){
   font-weight: bolder;
   font-size: 36rpx;
   margin-left: 10rpx;
 }
-.group-item .item-two .item-RPrice{
+.groupBuying .group-list .group-item .item-two .item-RPrice{
   font-weight: bolder;
   margin-left: 100rpx;
   font-size: 28rpx;
@@ -80,48 +89,52 @@
   display: block;
   float: left;
 }
-.group-item .item-two .Btn{
+.groupBuying .group-list .group-item .item-two .Btn{
   width: 285rpx;
   height: 76rpx;
   font-size: 28rpx;
   display: inline-block;
 }
-.group-item .item-two .Btn:nth-child(1){
+.groupBuying .group-list .group-item .item-two .btn0ne{
   color: white;
   background-color:#b58151 ;
+  margin-left: 20rpx;
 }
-.group-item .item-two .Btn:nth-child(2){
+.groupBuying .group-list .group-item .item-two .btnTwo{
   color: white;
   background-color:#3e2020 ;
   margin-left: 60rpx;
+
 }
+
 /*团购单个*/
 </style>
 <template>
   <view class="groupBuying">
-    <view>
+    <view class="group-list">
       <view class="group-item" wx:for="{{groupList}}" wx:for-index="index" wx:for-item="item" wx:key="id">
-        <view class="item-one">
-          <view class="item-discount">{{item.discount}}</view>
-          <image class="item-img" src="{{item.img}}"></image>
+        <view class="item-one" @tap="groupDetails({{item}})">
+          <view class="item-discount">{{item.discount}}折</view>
+          <image class="item-img" src="{{item.groupon_image}}"></image>
         </view>
         <view class="item-two">
-          <view class="item-title">{{item.detectionTitel}}</view>
-          <view class="item-title">{{item.title}}</view>
+          <view class="item-title">{{item.groupon_subtitle}}</view>
+          <view class="item-title">{{item.groupon_name}}</view>
           <view class="item-price">
-            <text class="item-LPrice">{{item.numPeople}}人成团价<text>￥{{item.discountPrice}}</text></text>
-            <text class="item-RPrice">独享价￥{{item.ExclusivePrice}}</text>
+            <text class="item-LPrice">{{item.person}}人成团价<text>￥{{item.groupon_price}}</text></text>
+            <text class="item-RPrice">独享价￥{{item.origin_price}}</text>
           </view>
-          <view>
-            <button class="Btn" @tap="cengGroupBtn({{item}})">去蹭团</button>
-            <button class="Btn" @tap="openGroupBtn({{item}})">立即开团</button>
+          <view style="text-align:{{item.groupAct?'':'center'}}">
+            <!--wx:if="{{item.groupAct}}"-->
+            <button class="Btn btn0ne" wx:if="{{item.groupAct}}" @tap="cengGroupBtn({{item}})">去蹭团</button>
+            <button class="Btn btnTwo" @tap="openGroupBtn({{item}})" style="width:{{item.groupAct?'285rpx':'500rpx'}};margin-left:{{item.groupAct?'60rpx':'0'}}">立即开团</button>
           </view>
         </view>
       </view>
     </view>
     <tabbar></tabbar>
     <login :isShow.sync="loginshow"></login>
-    <cengGroup :GroupShow.sync="GroupShow"></cengGroup>
+    <cengGroup :Group.sync="Group" catchtouchmove="ture"></cengGroup>
   </view>
 </template>
 
@@ -131,7 +144,7 @@
   import tabbar from '@/components/tabbar'
   import login from '@/components/login/login'
   import cengGroup from '@/components/group/cengGroup/cengGroup'
-
+  import testMixin from '@/mixins/test'
   export default class groupBuying extends wepy.page {
     config = {
       navigationBarTitleText: '团购',
@@ -143,57 +156,113 @@
       cengGroup:cengGroup,//蹭团
     };
 
-    //mixins = [testMixin];
+     mixins = [testMixin];
 
     data = {
+      globalData:wepy.$instance.globalData,
       loginshow:false,
-      GroupShow:false,//蹭团
-      groupList:[//团购数据
-        {
-          groupId:1,
-          discount:'85折',//折扣
-          img:'http://www.shinshop.com/public/images/7e/dd/47/7d9b3200fabea9df7994a799d00f6063e6276c25.jpg?1531462901#w',//图片地址
-          detectionTitel:'59项零农残黄心大油桃',//检测标题
-          title:'刘叔家的油桃',//标题
-          numPeople:2,//人数
-          discountPrice:'36',//团构价
-          ExclusivePrice:'40',//独享价
-        },
-        {
-          groupId:1,
-          discount:'85折',//折扣
-          img:'http://www.shinshop.com/public/images/29/c4/95/426c772d426de748123639a53c535dc64673c06c.jpg?1528367125#h',
-          detectionTitel:'59项零农残黄心大油桃',//检测标题
-          title:'刘叔家的油桃',//标题
-          numPeople:2,//人数
-          discountPrice:'36',//团构价
-          ExclusivePrice:'40',//独享价
-        }
-      ],
+      Group:{
+        GroupShow:false,
+        groupId:''
+      },//蹭团
+      groupList:[],//团购数据
     };
 
     computed = {};
 
     methods = {
       cengGroupBtn(item){//蹭团
-        console.log(item)
-        this.GroupShow = true
+        //console.log(item)
+
+        if (this.judgeLogin()) {//已注册
+          //蹭团弹出
+          this.Group = {
+            GroupShow:true,
+            groupId:item.groupon_id
+          }
+          this.$invoke('cengGroup', "getcengGroupList",item.groupon_id);
+          this.$apply()
+        }else {//未注册
+          this.loginshow = true
+        }
+        // this.GroupShow = true
+         //this.$apply()
       },
       openGroupBtn(item){//开团
+        //console.log(item)
+
+        if (this.judgeLogin()) {//已注册
+          wepy.navigateTo({
+            url: './groupDetails/groupDetails?groupon_id='+item.groupon_id
+          })
+        }else {//未注册
+          this.loginshow = true
+        }
+      },
+      groupDetails(item){//团购详情
         console.log(item)
+        wepy.navigateTo({
+          url: './groupDetails/groupDetails?groupon_id='+item.groupon_id
+        })
+
       },
 
     };
 
-    events = {};
-
-    onLoad() {
-      var loginInfo = wepy.getStorageSync('loginInfo')
-      if (!loginInfo) {
-        console.log('登录')
-        this.loginshow = true
+    events = {
+      'closeCengGroup':(param,even) =>{//蹭团关闭监听
+        //console.log(param)
+        this.Group = {
+          GroupShow:param,
+          groupId:''
+        }
+        // this.GroupShow = param
+        this.$apply()
+      },
+      'closeLogin':(param,even) =>{//登录关闭监听
+        //console.log(param)
+        this.loginshow = param
         this.$apply()
       }
+    };
+    getGroupList(){//获取团购列表
+      console.log('团购列表')
+      var self = this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy'+publicStr
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8",  //post
+        },
+        success: function(res) {
+          res.data.results.map((item) =>{
+            item.discount =parseInt(item.discount)
+            item.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+item.groupon_image
+          })
+          self.groupList = res.data.results
+          console.log(res)
+          self.$apply()
+        }
+      })
+    }
+    judgeLogin(){//判断是否登陆
+      var loginInfo = wepy.getStorageSync('loginInfo')
+      if (loginInfo) {//已登录
+        return true
+      }else {
+        return false
+      }
+    }
+    onLoad() {
+      var loginInfo = wepy.getStorageSync('loginInfo')
+      // if (!loginInfo) {
+      //   console.log('登录')
+      //   this.loginshow = true
+      //   this.$apply()
+      // }
+      this.getGroupList()
     }
   }
 </script>

@@ -1,0 +1,32 @@
+<style lang="less">
+
+</style>
+<template>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class confirmOrder extends wepy.page {
+    config = {
+      navigationBarTitleText: 'confirmOrder'
+    };
+    components = {};
+
+    //mixins = [testMixin];
+
+    data = {};
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>

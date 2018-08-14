@@ -14,7 +14,7 @@
   margin: 0 auto;
   margin-top: 200rpx;
   border-radius: 10rpx;
-  height: 400rpx;
+  /*height: 400rpx;*/
 }
 #cengGroup .cengGroup-modal  .modal-top{
   height:97rpx;
@@ -40,20 +40,99 @@
   margin-top: 25rpx;
 }
 #cengGroup .cengGroup-modal .modal-body{
-  height: 200rpx;
+  /*height: 200rpx;*/
+  background-color: #eeeeee;
+  padding-bottom:25rpx;
+  max-height:570rpx ;
 }
+/*蹭团列表*/
+  #cengGroup .cengGroup-modal .modal-body .statues{
+    color: #959595;
+    font-size: 26rpx;
+    text-align: center;
+    height: 90rpx;
+    line-height: 90rpx;
+    display: block;
+    margin: 0 auto;
+
+  }
+  #cengGroup .cengGroup-modal .modal-body .group-item{
+    background-color:#eeeeee ;
+
+  }
+#cengGroup .cengGroup-modal .modal-body .group-item .group-no{
+  color:#959595;
+  font-size: 24rpx;
+  height: 62rpx;
+  line-height: 62rpx;
+  display: block;
+  text-align: center;
+}
+  #cengGroup .cengGroup-modal .modal-body .group-item .group-div{
+    width: 575rpx;
+    margin: 0 auto;
+    height:220rpx ;
+    background-color: white;
+    border-radius: 15rpx;
+  }
+  #cengGroup .cengGroup-modal .modal-body .group-item .group-title{
+    font-size: 24rpx;
+    color: #3f2021;
+    height: 76rpx;
+    line-height: 76rpx;
+    display: block;
+    text-align: center;
+    border-bottom:1rpx solid #eeeeee;
+  }
+  #cengGroup .cengGroup-modal .modal-body .group-item .group-ifo{
+    height:140rpx ;
+    /*line-height: 140rpx;*/
+  }
+  #cengGroup .cengGroup-modal .modal-body .group-item .group-people{
+    margin-top: 26rpx;
+    height: 88rpx;
+    width: 88rpx;
+    border-radius: 50%;
+    background-color: #eeeeee;
+  }
+  #cengGroup .cengGroup-modal .modal-body .group-item .group-people:nth-child(1){
+    margin-left: 30rpx;
+  }
+  #cengGroup .cengGroup-modal .modal-body .group-item .group-people:nth-child(2){
+    margin-left: 20rpx;
+  }
+  #cengGroup .cengGroup-modal .modal-body .group-item .group-btn{
+    width: 160rpx;
+    height: 64rpx;
+    background-color:#b58151;
+    float: right;
+    margin-right: 26rpx;
+    margin-top: 38rpx;
+    line-height: 64rpx;
+    border-radius: 30rpx;
+    color: white;
+    font-size: 24rpx;
+  }
 </style>
 <template name="cengGroup">
   <!--蹭团弹框-->
-  <view id="cengGroup" wx:if="{{GroupShow}}">
+  <view id="cengGroup" wx:if="{{Group.GroupShow}}" catchtouchmove="ture">
     <view class="cengGroup-modal">
       <view class="modal-top">
         <text>选择要蹭的团</text>
         <image @tap="closeBtn" src="../../../../image/icon/icon-close.png"></image>
       </view>
-      <view class="modal-body">
-        <view>
-
+      <view class="modal-body" >
+        <text class="statues" wx:if="{{results.length==0}}">{{status_txt}}</text>
+        <view wx:if="{{results.length>0}}}" class="group-item" wx:for="{{results}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+          <text class="group-no">- 第{{index+1}}组 -</text>
+          <view class="group-div">
+            <text class="group-title">{{item.owner_name}}</text>
+            <view class="group-ifo">
+              <image class="group-people" wx:for="{{item.buyers}}" wx:for-index="index" wx:for-item="two" wx:key="id" src="{{two.member_img}}"></image>
+              <button class="group-btn" @tap="goCenggroup({{item}})">去蹭团</button>
+            </view>
+          </view>
         </view>
       </view>
     </view>
@@ -72,22 +151,78 @@
 
     mixins = [];
 
-    data = {};
-    props = {
-      GroupShow:true,
+    data = {
+      globalData:wepy.$instance.globalData,
+      results:[],//可参团数据
+      status_txt:'',//results返回为0  展示不可参参团信息
     };
-    computed = {};
+    props = {
+      Group:{
+        GroupShow:false,
+        groupId:'',
+      }
+
+    };
+    computed = {
+    };
 
     methods = {
       closeBtn(){
-        this.GroupShow = false
+        this.$emit('closeCengGroup',false)
+      },
+      goCenggroup(item){//去蹭团
+        // {
+        //   "gactivity_id":"180803141800607",
+        //   "groupon_id":"180731165490882",
+        //   "owner_id":"80067",
+        //   "owner_name":"w123",
+        //   "buyers":[]
+        // }
+        //event.currentTarget.dataset
+        console.log(item)
+      },
+      getcengGroupList(groupId){
+        var self = this
+        var publicStr = wepy.$instance.getPublicData()
+        var url = self.globalData.base_url+self.globalData.version_no+'/group-buy/join_group/'+groupId+publicStr
+        //console.log('groupId='+groupId)
+        wepy.request({
+          url:url,
+          method: "get",
+          header: {
+            "Content-Type": "application/json;"  //post
+          },
+          success: function(res) {
+            console.log(res)
+            var res = res.data
+            if (res.results.length>0) {
+              res.results.map((item) =>{
+                if (item.buyers.length>0) {
+                  item.buyers.map((two) =>{
+                    two.member_img = self.globalData.base_url+self.globalData.version_no+'/img/'+two.member_img
+                  })
+                }
+              })
+              self.results = res.results
+            }else {
+              self.status_txt = res.status_txt
+
+            }
+            self.$apply()
+
+          },
+          fail: function(res) {
+            console.log(res)
+          }
+        })
       },
     };
 
-    events = {};
+    events = {
+
+    };
 
     onLoad() {
-
     }
   }
 </script>

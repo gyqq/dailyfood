@@ -1,0 +1,35 @@
+<style lang="less">
+
+</style>
+<template>
+  <web-view src='{{url}}'></web-view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class webView extends wepy.page {
+    config = {
+      navigationBarTitleText: '客服'
+    };
+    components = {};
+
+    //mixins = [];
+
+    data = {
+      url:''
+    };
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+
+    onLoad(options) {
+      console.log(options)
+      this.url = options.url
+    }
+  }
+</script>

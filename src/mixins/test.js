@@ -10,6 +10,9 @@ export default class testMixin extends wepy.mixin {
       console.log('mixin method tap')
     }
   }
+  getImage(img){
+    console.log('加载图片')
+  }
 
   onShow() {
     console.log('mixin onShow')
