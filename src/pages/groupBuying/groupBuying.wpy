@@ -92,6 +92,7 @@
 .groupBuying .group-list .group-item .item-two .Btn{
   width: 285rpx;
   height: 76rpx;
+  line-height: 76rpx;
   font-size: 28rpx;
   display: inline-block;
 }
@@ -180,7 +181,7 @@
             GroupShow:true,
             groupId:item.groupon_id
           }
-          this.$invoke('cengGroup', "getcengGroupList",item.groupon_id);
+          this.$invoke('cengGroup', "getcengGroupList",item.groupon_id,item.remain_time,item);
           this.$apply()
         }else {//未注册
           this.loginshow = true

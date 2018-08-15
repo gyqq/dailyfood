@@ -1,0 +1,34 @@
+<style lang="less">
+
+</style>
+<template>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class groupState extends wepy.page {
+    config = {
+      navigationBarTitleText: '开团成功'
+    };
+    components = {};
+
+    //mixins = [testMixin];
+
+    data = {
+      groupState:'开团成功'
+    };
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>

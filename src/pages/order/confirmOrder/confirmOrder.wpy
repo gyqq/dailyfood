@@ -229,13 +229,13 @@
     <view class="confirmOrder-address">
       <view class="address-left left">
         <view class="address-left-top">
-          <text class="address-default left">默认</text>
-          <text class="address-name textColor left">谢云流</text>
-          <text class="address-phone textColor left">18882824646</text>
+          <text class="address-default left" wx:if="{{addresses.def_addr=='1'}}">默认</text>
+          <text class="address-name textColor left">{{addresses.name}}</text>
+          <text class="address-phone textColor left">{{addresses.mobile}}</text>
         </view>
         <view>
-          <text class="address-type left">公司</text>
-          <text class="address textColor left">上海 上海市 长宁区 新泾镇 金钟路631号2号楼3楼</text>
+          <!--<text class="address-type left">公司</text>-->
+          <text class="address textColor left">{{addresses.area}}   {{addresses.addr}}</text>
         </view>
       </view>
       <image  class="address-rightArrow right" src="../../../../image/icon/icon-rightArrow.png"></image>
@@ -280,7 +280,7 @@
   <view class="confirmOrder-bottom">
     <text class="bottom-price">应付款</text>
     <text class="bottom-price">￥36.00</text>
-    <view class="bottom-submitBtn">提交订单</view>
+    <view class="bottom-submitBtn" @tap="submitOrder">提交订单</view>
   </view>
 </template>
 
@@ -296,16 +296,71 @@
 
     //mixins = [testMixin];
 
-    data = {};
+    data = {
+      globalData:wepy.$instance.globalData,
+      groupon_id:'',//团购id
+      addr_id:'',//收货地址id "47597"
+      addresses:{},//
+    };
 
     computed = {};
 
-    methods = {};
+    methods = {
+      submitOrder(){//提交订单
+
+      },
+    };
 
     events = {};
+    getAddress(){//获得收货地址
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/member/addresses'+publicStr+'&addr_id='+this.addr_id
+      //console.log(url)
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          //console.log(res)
+          if (res.data.results.length>1){
+            res.data.results.map((item) =>{
+              if (item.def_addr=='1'){//默认地址
+                item.area = item.area.split(':')[1]
+                self.addresses = item
+              }
+            })
+          }
+         // console.log(self.addresses)
+          self.$apply()
+        }
+      })
+    }
+    getGroupProduct(){//获取商品信息  团购信息
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy'+publicStr+'&groupon_id='+this.groupon_id
+      console.log(url)
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          console.log(res)
 
-    onLoad() {
-
+          self.$apply()
+        }
+      })
+    }
+    onLoad(options) {
+      this.groupon_id = options.groupon_id
+      this.getAddress()//收货地址
+      this.getGroupProduct()//团购信息
+      //console.log(options)
     }
   }
 </script>

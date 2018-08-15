@@ -41,6 +41,7 @@
 }
 #cengGroup .cengGroup-modal .modal-body{
   /*height: 200rpx;*/
+  min-height: 200rpx;
   background-color: #eeeeee;
   padding-bottom:25rpx;
   max-height:570rpx ;
@@ -48,14 +49,33 @@
 /*蹭团列表*/
   #cengGroup .cengGroup-modal .modal-body .statues{
     color: #959595;
-    font-size: 26rpx;
+    font-size: 28rpx;
     text-align: center;
-    height: 90rpx;
-    line-height: 90rpx;
+    /*height: 90rpx;*/
+    /*line-height: 90rpx;*/
+    height: 100rpx;
+    line-height: 57rpx;
+    width: 290rpx;
     display: block;
     margin: 0 auto;
+    margin-top: 30rpx;
 
   }
+
+  #cengGroup .cengGroup-modal .modal-body .statues-btn{
+    width: 510rpx;
+    height: 76rpx;
+    line-height: 76rpx;
+    text-align: center;
+    background-color:#3e2020;
+    color: white;
+    font-size: 28rpx;
+    margin: 0 auto;
+    margin-top: 30rpx;
+    border-radius: 7rpx;
+    letter-spacing:2rpx;
+  }
+
   #cengGroup .cengGroup-modal .modal-body .group-item{
     background-color:#eeeeee ;
 
@@ -123,7 +143,9 @@
         <image @tap="closeBtn" src="../../../../image/icon/icon-close.png"></image>
       </view>
       <view class="modal-body" >
-        <text class="statues" wx:if="{{results.length==0}}">{{status_txt}}</text>
+        <!--<text class="statues" wx:if="{{results.length==0}}">{{status_txt}}</text>-->
+        <text class="statues" wx:if="{{results.length==0}}">目前暂时没有可蹭的团,快来开团吧!</text>
+        <view class="statues-btn" wx:if="{{results.length==0}}" @tap="openGroup">立即开团</view>
         <view wx:if="{{results.length>0}}}" class="group-item" wx:for="{{results}}" wx:for-index="index" wx:for-item="item" wx:key="id">
           <text class="group-no">- 第{{index+1}}组 -</text>
           <view class="group-div">
@@ -152,6 +174,7 @@
     mixins = [];
 
     data = {
+      groupDetail:{},//此团购全部信息
       globalData:wepy.$instance.globalData,
       results:[],//可参团数据
       status_txt:'',//results返回为0  展示不可参参团信息
@@ -167,8 +190,17 @@
     };
 
     methods = {
+
       closeBtn(){
         this.$emit('closeCengGroup',false)
+      },
+      openGroup(){//开团
+        console.log('跳转')
+        this.$emit('closeCengGroup',false)
+        wepy.navigateTo({
+          url: '../../order/confirmOrder/confirmOrder'
+        })
+        // this.$emit('goConfirmOrder')
       },
       goCenggroup(item){//去蹭团
         // {
@@ -181,8 +213,10 @@
         //event.currentTarget.dataset
         console.log(item)
       },
-      getcengGroupList(groupId){
+      getcengGroupList(groupId,remain_time,groupDetail){
         var self = this
+        self.groupDetail = groupDetail
+        console.log(self.groupDetail)
         var publicStr = wepy.$instance.getPublicData()
         var url = self.globalData.base_url+self.globalData.version_no+'/group-buy/join_group/'+groupId+publicStr
         //console.log('groupId='+groupId)
@@ -196,14 +230,26 @@
             console.log(res)
             var res = res.data
             if (res.results.length>0) {
-              res.results.map((item) =>{
-                if (item.buyers.length>0) {
-                  item.buyers.map((two) =>{
-                    two.member_img = self.globalData.base_url+self.globalData.version_no+'/img/'+two.member_img
+              res.results.map((one) =>{
+                if (one.buyers.length>0) {
+                  one.buyers.map((two) =>{
+                    if (two.is_leader=="master"){//团主
+                      two.member_img = self.globalData.base_url+self.globalData.version_no+'/img/'+two.member_img
+                      var timestamp = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+                      var time = parseInt(remain_time)+parseInt(two.create_time)//
+                      if (time>timestamp) {
+                        self.results.push(one)
+                      }
+                      // console.log(timestamp)
+                      // console.log(parseInt(remain_time)+parseInt(two.create_time))
+                      // console.log(time)
+                    }
+
+
                   })
                 }
               })
-              self.results = res.results
+              // self.results = res.results
             }else {
               self.status_txt = res.status_txt
 

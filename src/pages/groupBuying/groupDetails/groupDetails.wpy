@@ -157,9 +157,10 @@
           //蹭团弹出
           this.Group = {
             GroupShow:true,
-            groupId:this.groupDetail.groupon_id
+            groupId:this.groupDetail.groupon_id,
+            remain_time:this.groupDetail.remain_time
           }
-          this.$invoke('cengGroup', "getcengGroupList",this.groupDetail.groupon_id);
+          this.$invoke('cengGroup', "getcengGroupList",this.groupDetail.groupon_id,this.groupDetail.remain_time,this.groupDetail);
           this.$apply()
         }else {//未注册
           this.loginshow = true
@@ -167,21 +168,27 @@
       },
       openGroupBtn(){//立即开团
         wepy.navigateTo({
-          url: '../../order/confirmOrder/confirmOrder'
+          url: '../../order/confirmOrder/confirmOrder?groupon_id='+this.groupDetail.groupon_id
         })
       },
     };
 
     events = {
-        'closeCengGroup':(param,even) =>{//蹭团关闭监听
-          //console.log(param)
-          this.Group = {
-            GroupShow:param,
-            groupId:''
-          }
-          // this.GroupShow = param
-          this.$apply()
-        },
+      'closeCengGroup':(param,even) =>{//蹭团关闭监听
+        //console.log(param)
+        this.Group = {
+          GroupShow:param,
+          groupId:''
+        }
+        // this.GroupShow = param
+        this.$apply()
+      },
+      'goConfirmOrder':()=>{
+        wepy.navigateTo({
+          url: '../../order/confirmOrder/confirmOrder'
+        })
+      }
+
     };
     judgeLogin(){//判断是否登陆
       var loginInfo = wepy.getStorageSync('loginInfo')
@@ -194,7 +201,6 @@
     getGroupList(){//获取团购列表
       var self = this
       var publicStr = wepy.$instance.getPublicData()
-      var access_token = wepy.getStorageSync('loginInfo').access_token ||''
       let url = self.globalData.base_url+self.globalData.version_no+'/group-buy'+publicStr
       wepy.request({
         url:url,
