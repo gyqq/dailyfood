@@ -33,7 +33,8 @@ export default class extends wepy.app {
       'pages/groupBuying/groupDetails/groupDetails',
       'pages/webView/webView',
       'pages/secondkill/secondkill',
-      'pages/user/user'
+      'pages/user/user',
+      'pages/order/confirmOrder/confirmOrder'
     ],
     window: {
       backgroundTextStyle: 'light',

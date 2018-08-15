@@ -88,7 +88,7 @@
       <image src="/image/group/icon-customerService.png"></image>
       <text>联系客服</text>
     </view>
-    <view class="left">
+    <view class="left" @tap="openGroupBtn">
       立即开团
     </view>
     <view class="left" @tap="cengGroupBtn">
@@ -164,6 +164,11 @@
         }else {//未注册
           this.loginshow = true
         }
+      },
+      openGroupBtn(){//立即开团
+        wepy.navigateTo({
+          url: '../../order/confirmOrder/confirmOrder'
+        })
       },
     };
 
