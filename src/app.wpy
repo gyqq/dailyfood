@@ -35,6 +35,8 @@ export default class extends wepy.app {
       'pages/webView/webView',
       'pages/secondkill/secondkill',
       'pages/user/user',
+      'pages/user/address/address',
+      'pages/user/address/address_EA',
       'pages/order/confirmOrder/confirmOrder'
     ],
     window: {

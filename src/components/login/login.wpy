@@ -292,19 +292,30 @@
 
       },
 
-      getUserInfo(){//获取用户信息
+      getUserInfo(data){//获取用户信息
         var self =this
-        wepy.getUserInfo({
-          //获取信息
-          success (res) {
-            wepy.setStorageSync('userInfo', res)
-            wepy.$instance.globalData.userInfo = res
-            self.makeSure(self.loginType)
-          },
-          fail (res) {
+        var data = data.detail
+
+        wepy.login({
+          success: function(res) {
+            //res.code
             console.log(res)
+            wepy.setStorageSync('userInfo', data)
+            wepy.$instance.globalData.userInfo = data
+            self.makeSure(self.loginType)
           }
         })
+        // wepy.getUserInfo({
+        //   //获取信息
+        //   success (res) {
+        //     wepy.setStorageSync('userInfo', res)
+        //     wepy.$instance.globalData.userInfo = res
+        //     self.makeSure(self.loginType)
+        //   },
+        //   fail (res) {
+        //     console.log(res)
+        //   }
+        // })
       },
       closeLogin(){
         console.log('关闭')
@@ -360,7 +371,7 @@
       }
       var url = self.globalData.base_url+'oauth2/token'
       // console.log(url)
-      console.log(data)
+      //console.log(data)
       wepy.request({
         url:url,
         method: "POST",
@@ -377,6 +388,7 @@
               // img: '../../image/icon/error-icon.png',
             });
           }else {
+            res.name = loginIfo.username
             wepy.setStorageSync('loginInfo', res)
             wepy.showToast({
               title: '登陆成功',

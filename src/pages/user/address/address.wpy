@@ -1,0 +1,161 @@
+<style lang="less">
+  page{
+    background-color: #f0eff5;
+  }
+.addressList{
+  padding-bottom:136rpx;
+  /*height: 100%;*/
+  /*width: 100%;*/
+
+}
+  .addressList .left{
+    display: block;
+    float: left;
+  }
+  .addressList .right{
+    display: block;
+    float: right;
+  }
+  .addressList .addressList-item{
+    /*border-bottom: 1rpx solid #f0eff4;*/
+    background-color:white ;
+    margin-top: 2rpx;
+  }
+  /*地址类型*/
+  .addressList .addressList-item .item-tip{
+    width: 107rpx;
+    height: 180rpx;
+    line-height: 180rpx;
+    font-size: 20rpx;
+    color: #b68052;
+    text-align: center;
+  }
+  /*中间信息*/
+  .addressList .addressList-item .item-ifo{
+    width: 530rpx;
+    font-size: 26rpx;
+    color: #3d2120;
+    height: 180rpx;
+  }
+  .addressList .addressList-item .item-ifo .item-basicIfo{
+    margin-top: 43rpx;
+  }
+
+  .addressList .addressList-item .item-ifo .item-basicIfo text:nth-child(2){
+    margin-left:65rpx ;
+  }
+  /*编辑*/
+  .addressList .addressList-item .item-editor{
+    width: 107rpx;
+    height: 180rpx;
+    line-height: 180rpx;
+    font-size: 20rpx;
+    color: #b68052;
+    text-align: center;
+  }
+  .address-bg{
+    background: #f0eff5;
+    width: 100%;
+    position:fixed;
+    bottom: 0;
+    padding-bottom: 23rpx;
+    padding-top: 23rpx;
+  }
+  /*按钮*/
+  .address-Btn{
+    width: 90%;
+    background-color: #3e2020;
+    color: white;
+    font-size: 31rpx;
+    text-align: center;
+    height: 90rpx;
+    line-height: 90rpx;
+    border-radius: 5rpx;
+    letter-spacing:5rpx;
+    margin: 0 auto;
+  }
+</style>
+<template>
+  <view class="addressList">
+    <view class="addressList-item" wx:for="{{addressList}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+      <view class="left item-tip">
+        {{item.tip}}
+      </view>
+      <view class="left item-ifo">
+        <view class="item-basicIfo">
+          <text>{{item.name}}</text>
+          <text>{{item.mobile}}</text>
+        </view>
+        <view class="item-adress">
+          {{item.area}} {{item.addr}}
+        </view>
+      </view>
+      <view class="right item-editor" @tap="editBtn({{item}})">
+        编辑
+      </view>
+    </view>
+  </view>
+  <view class="address-bg">
+    <view class="address-Btn">添加新地址</view>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class address extends wepy.page {
+    config = {
+      navigationBarTitleText: '收货地址'
+    };
+    components = {};
+
+    //mixins = [testMixin];
+
+    data = {
+      globalData:wepy.$instance.globalData,
+      addressList:[],//收货地址数据
+    };
+
+    computed = {};
+
+    methods = {
+      editBtn(item){//收货地址编辑
+        console.log(item.addr_id)
+        wepy.navigateTo({
+          url: '../../user/address/address_EA?addr_id='+item.addr_id
+        })
+      },
+    };
+    getAddresList(){//获取全部收货地址
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/member/addresses'+publicStr+'&addr_id='
+      //console.log(self.addr_id)
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          console.log(res)
+          res.data.results.map((item) =>{
+            item.area = item.area.split(':')[1]
+            if (item.def_addr=='1') {
+              item.tip = '默认'
+            }
+          })
+          self.addressList = res.data.results
+          self.$apply()
+        }
+      })
+    }
+    events = {};
+
+    onLoad(options) {
+      this.getAddresList()//获取全部收货地址
+    }
+  }
+</script>

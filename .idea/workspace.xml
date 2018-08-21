@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f20b5d4b-43db-4a12-88d3-f8c5eb9fc97b" name="Default" comment="">
+    <list default="true" id="f20b5d4b-43db-4a12-88d3-f8c5eb9fc97b" name="Default" comment="订单页面交互">
+      <change afterPath="$PROJECT_DIR$/src/pages/user/address/address.wpy" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/user/address/address_EA.wpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.wpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.wpy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/group/cengGroup/cengGroup.wpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/cengGroup/cengGroup.wpy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/groupBuying/groupBuying.wpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/groupBuying/groupBuying.wpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/login/login.wpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/login/login.wpy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/groupBuying/groupDetails/groupDetails.wpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/groupBuying/groupDetails/groupDetails.wpy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/order/confirmOrder/confirmOrder.wpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/order/confirmOrder/confirmOrder.wpy" afterDir="false" />
     </list>
@@ -19,28 +22,51 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="groupDetails.wpy" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pages/groupBuying/groupDetails/groupDetails.wpy">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="confirmOrder.wpy" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pages/order/confirmOrder/confirmOrder.wpy">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="478">
-              <caret line="203" column="90" selection-start-line="202" selection-start-column="6" selection-end-line="203" selection-end-column="90" />
+            <state relative-caret-position="6080">
+              <caret line="321" column="10" selection-start-line="319" selection-start-column="8" selection-end-line="321" selection-end-column="10" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="confirmOrder.wpy" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/pages/order/confirmOrder/confirmOrder.wpy">
+      <file leaf-file-name="groupBuying.wpy" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pages/groupBuying/groupBuying.wpy">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="267">
-              <caret line="348" column="17" lean-forward="true" selection-start-line="348" selection-start-column="17" selection-end-line="348" selection-end-column="17" />
+            <state relative-caret-position="2185">
+              <caret line="115" column="105" selection-start-line="115" selection-start-column="31" selection-end-line="115" selection-end-column="105" />
               <folding>
-                <element signature="n#view#2;n#view#0;n#template#0;n#!!top" />
-                <element signature="n#view#3;n#view#0;n#template#0;n#!!top" />
-                <element signature="n#view#4;n#view#0;n#template#0;n#!!top" />
-                <element signature="n#view#5;n#view#0;n#template#0;n#!!top" />
-                <element signature="n#view#1;n#template#0;n#!!top" />
-                <element signature="e#7936#7950#0" />
+                <element signature="n#style#0;n#view#3;n#view#1;n#view#0;n#view#0;n#view#0;n#template#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#button#1;n#view#3;n#view#1;n#view#0;n#view#0;n#view#0;n#template#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="address.wpy" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pages/user/address/address.wpy">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="57">
+              <caret line="3" column="3" selection-start-line="1" selection-start-column="2" selection-end-line="3" selection-end-column="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="address_EA.wpy" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/pages/user/address/address_EA.wpy">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="285" column="24" selection-start-line="285" selection-start-column="24" selection-end-line="285" selection-end-column="24" />
+              <folding>
+                <element signature="n#style#0;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#picker-view#0;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#view#0;n#picker-view-column#0;n#picker-view#0;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#picker-view#1;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#view#0;n#picker-view-column#0;n#picker-view#1;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#picker-view#2;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#view#0;n#picker-view-column#0;n#picker-view#2;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -59,16 +85,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>plus</find>
-      <find>$name</find>
-      <find>DECREMENT</find>
-      <find>$parent</find>
-      <find>avatarUrl</find>
-      <find>userInfo</find>
-      <find>that</find>
-      <find>editTabBar</find>
-      <find>image</find>
-      <find>hidden</find>
       <find>itemView</find>
       <find>sendCode</find>
       <find>currentTime</find>
@@ -76,11 +92,10 @@
       <find>userNumberInput</find>
       <find>sendCodeMsg</find>
       <find>wetoast__bd__title</find>
-      <find>getUserInfo</find>
       <find>modal-body</find>
       <find>wxParseImg</find>
       <find>articleDetail</find>
-      <find />
+      <find>&lt;template name=&quot;wxParseImg&quot;&gt;</find>
       <find>list</find>
       <find>testMixin</find>
       <find>isShow</find>
@@ -89,6 +104,17 @@
       <find>group-people</find>
       <find>cengGroupBtn</find>
       <find>groupDetail</find>
+      <find>login</find>
+      <find>getUserInfo</find>
+      <find>makeSure</find>
+      <find>userCodeInput</find>
+      <find>buyers</find>
+      <find>play</find>
+      <find>provinces</find>
+      <find>placeArray</find>
+      <find>province</find>
+      <find>this.province</find>
+      <find>pIndex</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -129,15 +155,19 @@
         <option value="$PROJECT_DIR$/src/pages/webView/webView.wpy" />
         <option value="$PROJECT_DIR$/src/mixins/test.js" />
         <option value="$PROJECT_DIR$/src/mixins/util.js" />
-        <option value="$PROJECT_DIR$/src/components/login/login.wpy" />
         <option value="$PROJECT_DIR$/src/pages/order/confirmOrder/confirmOrder.vue" />
-        <option value="$PROJECT_DIR$/src/components/group/cengGroup/cengGroup.wpy" />
         <option value="$PROJECT_DIR$/src/pages/groupBuying/groupBuying.wpy" />
         <option value="$PROJECT_DIR$/src/pages/groupBuying/groupState/groupState.vue" />
-        <option value="$PROJECT_DIR$/src/app.wpy" />
         <option value="$PROJECT_DIR$/src/pages/groupBuying/groupState/groupState.wpy" />
+        <option value="$PROJECT_DIR$/src/components/group/cengGroup/cengGroup.wpy" />
+        <option value="$PROJECT_DIR$/src/components/login/login.wpy" />
         <option value="$PROJECT_DIR$/src/pages/groupBuying/groupDetails/groupDetails.wpy" />
+        <option value="$PROJECT_DIR$/src/pages/user/address/address.vue" />
         <option value="$PROJECT_DIR$/src/pages/order/confirmOrder/confirmOrder.wpy" />
+        <option value="$PROJECT_DIR$/src/pages/user/address/address_EA.vue" />
+        <option value="$PROJECT_DIR$/src/app.wpy" />
+        <option value="$PROJECT_DIR$/src/pages/user/address/address.wpy" />
+        <option value="$PROJECT_DIR$/src/pages/user/address/address_EA.wpy" />
       </list>
     </option>
   </component>
@@ -158,8 +188,8 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="24" />
-    <option name="y" value="53" />
+    <option name="x" value="19" />
+    <option name="y" value="23" />
     <option name="width" value="1416" />
     <option name="height" value="821" />
   </component>
@@ -179,6 +209,32 @@
             <path>
               <item name="dailyfood" type="b2602c69:ProjectViewProjectNode" />
               <item name="dailyfood" type="462c0819:PsiDirectoryNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dailyfood" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dailyfood" type="462c0819:PsiDirectoryNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+              <item name="pages" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dailyfood" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dailyfood" type="462c0819:PsiDirectoryNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+              <item name="pages" type="462c0819:PsiDirectoryNode" />
+              <item name="user" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dailyfood" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dailyfood" type="462c0819:PsiDirectoryNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+              <item name="pages" type="462c0819:PsiDirectoryNode" />
+              <item name="user" type="462c0819:PsiDirectoryNode" />
+              <item name="address" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dailyfood" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dailyfood" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -199,8 +255,15 @@
               <item name="dailyfood" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="pages" type="462c0819:PsiDirectoryNode" />
-              <item name="groupBuying" type="462c0819:PsiDirectoryNode" />
-              <item name="groupState" type="462c0819:PsiDirectoryNode" />
+              <item name="user" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dailyfood" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dailyfood" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="pages" type="462c0819:PsiDirectoryNode" />
+              <item name="user" type="462c0819:PsiDirectoryNode" />
+              <item name="address" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -269,7 +332,14 @@
       <workItem from="1533863785797" duration="21798000" />
       <workItem from="1534245532555" duration="361000" />
       <workItem from="1534246025488" duration="24000" />
-      <workItem from="1534246075934" duration="12179000" />
+      <workItem from="1534246075934" duration="12272000" />
+      <workItem from="1534333253008" duration="7366000" />
+      <workItem from="1534407506757" duration="8127000" />
+      <workItem from="1534816692556" duration="8801000" />
+      <workItem from="1534836131635" duration="7198000" />
+      <workItem from="1534846868965" duration="541000" />
+      <workItem from="1534847810559" duration="8000" />
+      <workItem from="1534848062994" duration="6050000" />
     </task>
     <task id="LOCAL-00001" summary="备注,与新增">
       <created>1532398827234</created>
@@ -320,14 +390,21 @@
       <option name="project" value="LOCAL" />
       <updated>1534312399303</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="订单页面交互">
+      <created>1534332728962</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1534332728962</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="177382000" />
+    <option name="totallyTimeSpent" value="215566000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1" y="105" width="1416" height="821" extended-state="0" />
+    <frame x="19" y="23" width="1416" height="821" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21327683" />
@@ -335,8 +412,8 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5007062" side_tool="true" weight="0.32931727" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49929377" weight="0.02811245" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="npm" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -354,19 +431,19 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21327683" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49929377" weight="0.02811245" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32931727" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5007062" side_tool="true" weight="0.02811245" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32931727" />
+      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49929377" weight="0.02811245" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info id="Favorites" order="3" side_tool="true" />
     </layout-to-restore>
   </component>
@@ -411,7 +488,8 @@
     <MESSAGE value="登录模块修改" />
     <MESSAGE value="订单模块新增" />
     <MESSAGE value="订单页面完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="订单页面完成" />
+    <MESSAGE value="订单页面交互" />
+    <option name="LAST_COMMIT_MESSAGE" value="订单页面交互" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -419,15 +497,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/dist/components/wepy-list.wxss">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dist/pages/index.wxss">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dist/pages/user/user.wxss">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/dist/pages/secondkill/secondkill.wxss">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -659,13 +728,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/login/login.wpy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1311">
-          <caret line="69" column="18" selection-start-line="69" selection-start-column="2" selection-end-line="69" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/pages/groupBuying/groupState/groupState.wpy">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
@@ -673,32 +735,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/app.wpy">
+    <entry file="file://$PROJECT_DIR$/src/components/group/cengGroup/cengGroup.wpy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="33" column="35" selection-start-line="33" selection-start-column="35" selection-end-line="33" selection-end-column="35" />
-          <folding>
-            <element signature="e#340#363#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="399">
+          <caret line="248" column="2" selection-start-line="248" selection-start-column="2" selection-end-line="248" selection-end-column="2" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/group/cengGroup/cengGroup.wpy">
+    <entry file="file://$PROJECT_DIR$/src/components/login/login.wpy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="54" column="27" selection-start-line="54" selection-start-column="27" selection-end-line="54" selection-end-column="27" />
-          <folding>
-            <element signature="n#view#0;n#view#0;n#view#0;n#template#0;n#!!top" />
-            <element signature="n#view#0;n#view#1;n#view#0;n#view#0;n#template#0;n#!!top" />
-            <element signature="e#4228#4252#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="270">
+          <caret line="238" column="8" selection-start-line="236" selection-start-column="6" selection-end-line="238" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pages/groupBuying/groupDetails/groupDetails.wpy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3325">
+          <caret line="186" column="10" selection-start-line="184" selection-start-column="8" selection-end-line="186" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pages/groupBuying/groupBuying.wpy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1008">
-          <caret line="159" column="20" selection-start-line="159" selection-start-column="20" selection-end-line="159" selection-end-column="20" />
+        <state relative-caret-position="2185">
+          <caret line="115" column="105" selection-start-line="115" selection-start-column="31" selection-end-line="115" selection-end-column="105" />
           <folding>
             <element signature="n#style#0;n#view#3;n#view#1;n#view#0;n#view#0;n#view#0;n#template#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#button#1;n#view#3;n#view#1;n#view#0;n#view#0;n#view#0;n#template#0;n#!!top" expanded="true" />
@@ -706,24 +767,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pages/groupBuying/groupDetails/groupDetails.wpy">
+    <entry file="file://$PROJECT_DIR$/src/app.wpy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="203" column="90" selection-start-line="202" selection-start-column="6" selection-end-line="203" selection-end-column="90" />
+        <state relative-caret-position="538">
+          <caret line="38" column="38" lean-forward="true" selection-start-line="38" selection-start-column="38" selection-end-line="38" selection-end-column="38" />
+          <folding>
+            <element signature="e#340#363#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pages/order/confirmOrder/confirmOrder.wpy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="348" column="17" lean-forward="true" selection-start-line="348" selection-start-column="17" selection-end-line="348" selection-end-column="17" />
+        <state relative-caret-position="6080">
+          <caret line="321" column="10" selection-start-line="319" selection-start-column="8" selection-end-line="321" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pages/user/address/address.wpy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" column="3" selection-start-line="1" selection-start-column="2" selection-end-line="3" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/pages/user/address/address_EA.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="263" column="33" lean-forward="true" selection-start-line="263" selection-start-column="33" selection-end-line="263" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pages/user/address/address_EA.wpy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="285" column="24" selection-start-line="285" selection-start-column="24" selection-end-line="285" selection-end-column="24" />
           <folding>
-            <element signature="n#view#2;n#view#0;n#template#0;n#!!top" />
-            <element signature="n#view#3;n#view#0;n#template#0;n#!!top" />
-            <element signature="n#view#4;n#view#0;n#template#0;n#!!top" />
-            <element signature="n#view#5;n#view#0;n#template#0;n#!!top" />
-            <element signature="n#view#1;n#template#0;n#!!top" />
-            <element signature="e#7936#7950#0" />
+            <element signature="n#style#0;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#picker-view#0;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#view#0;n#picker-view-column#0;n#picker-view#0;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#picker-view#1;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#view#0;n#picker-view-column#0;n#picker-view#1;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#picker-view#2;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#view#0;n#picker-view-column#0;n#picker-view#2;n#view#1;n#view#1;n#template#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

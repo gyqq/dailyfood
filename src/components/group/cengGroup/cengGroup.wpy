@@ -144,15 +144,15 @@
       </view>
       <view class="modal-body" >
         <!--<text class="statues" wx:if="{{results.length==0}}">{{status_txt}}</text>-->
-        <text class="statues" wx:if="{{results.length==0}}">目前暂时没有可蹭的团,快来开团吧!</text>
-        <view class="statues-btn" wx:if="{{results.length==0}}" @tap="openGroup">立即开团</view>
+        <text class="statues" wx:if="{{results.length==0}}">{{status_txt}}</text>
+        <view class="statues-btn" wx:if="{{results.length==0 && status!='-3'}}" @tap="openGroup">立即开团</view>
         <view wx:if="{{results.length>0}}}" class="group-item" wx:for="{{results}}" wx:for-index="index" wx:for-item="item" wx:key="id">
           <text class="group-no">- 第{{index+1}}组 -</text>
           <view class="group-div">
             <text class="group-title">{{item.owner_name}}</text>
             <view class="group-ifo">
               <image class="group-people" wx:for="{{item.buyers}}" wx:for-index="index" wx:for-item="two" wx:key="id" src="{{two.member_img}}"></image>
-              <button class="group-btn" @tap="goCenggroup({{item}})">去蹭团</button>
+              <button class="group-btn"  @tap="goCenggroup({{item}})">去蹭团</button>
             </view>
           </view>
         </view>
@@ -177,7 +177,8 @@
       groupDetail:{},//此团购全部信息
       globalData:wepy.$instance.globalData,
       results:[],//可参团数据
-      status_txt:'',//results返回为0  展示不可参参团信息
+      status_txt:'目前暂时没有可蹭的团,快来开团吧!',//results返回为0  展示不可参参团信息
+      status:'',//返回状态 -3在参团
     };
     props = {
       Group:{
@@ -229,6 +230,9 @@
           success: function(res) {
             console.log(res)
             var res = res.data
+            self.status_txt = res.status_txt//提示
+            self.status = res.status
+            console.log(self.status)
             if (res.results.length>0) {
               res.results.map((one) =>{
                 if (one.buyers.length>0) {
@@ -237,25 +241,20 @@
                       two.member_img = self.globalData.base_url+self.globalData.version_no+'/img/'+two.member_img
                       var timestamp = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
                       var time = parseInt(remain_time)+parseInt(two.create_time)//
-                      if (time>timestamp) {
+                      if (time>timestamp) {//未过期
                         self.results.push(one)
                       }
-                      // console.log(timestamp)
-                      // console.log(parseInt(remain_time)+parseInt(two.create_time))
-                      // console.log(time)
+                      console.log(timestamp)
+                      console.log(time)
                     }
-
-
                   })
                 }
               })
               // self.results = res.results
             }else {
               self.status_txt = res.status_txt
-
             }
             self.$apply()
-
           },
           fail: function(res) {
             console.log(res)

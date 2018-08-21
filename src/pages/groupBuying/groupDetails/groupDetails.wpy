@@ -151,8 +151,6 @@
         })
       },
       cengGroupBtn(){//蹭团
-        //console.log(item)
-
         if (this.judgeLogin()) {//已注册
           //蹭团弹出
           this.Group = {
@@ -217,6 +215,15 @@
             }
           })
           console.log(self.groupDetail)
+          var name = wepy.getStorageSync('loginInfo').name
+          if (self.groupDetail.groupAct) {//查询本人是否参
+            self.groupDetail.groupAct.buyers.map((one) =>{
+              if(one.name==name){
+                console.log('已参与')
+              }
+            })
+          }
+
           WxParse.wxParse('article', 'html', img, self,1);
           self.$apply()
         }

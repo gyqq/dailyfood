@@ -226,7 +226,7 @@
   <!--订单确认-->
   <view class="confirmOrder">
     <view class="confirmOrder-one"></view>
-    <view class="confirmOrder-address">
+    <view class="confirmOrder-address" @tap="selectAddress">
       <view class="address-left left">
         <view class="address-left-top">
           <text class="address-default left" wx:if="{{addresses.def_addr=='1'}}">默认</text>
@@ -241,17 +241,17 @@
       <image  class="address-rightArrow right" src="../../../../image/icon/icon-rightArrow.png"></image>
     </view>
     <view class="confirmOrder-proTitle">
-      <text class="left">进行中1/2</text>
+      <text class="left">进行中1/{{groupIfo.person}}</text>
     </view>
     <view class="confirmOrder-productIfo">
       <view class="pro-item">
-        <image src="" class="pro-img left"></image>
+        <image src="{{groupIfo.groupon_image}}" class="pro-img left"></image>
         <view class="pro-ifo left">
-          <text class="pro-title">刘叔家的油桃</text>
+          <text class="pro-title">{{groupIfo.groupon_name}}</text>
           <view class="pro-price">
-            <text class="pro-num">2人拼团价</text>
-            <text class="pro-groupPrice">￥36.00</text>
-            <text class="pro-originalPrice">￥42.00</text>
+            <text class="pro-num">{{groupIfo.person}}人拼团价</text>
+            <text class="pro-groupPrice">￥{{groupIfo.groupon_price}}</text>
+            <text class="pro-originalPrice">￥{{groupIfo.origin_price}}</text>
           </view>
         </view>
       </view>
@@ -262,24 +262,24 @@
       <text class="right invoice-type">不开发票</text>
     </view>
     <view class="confirmOrder-ifo">
-      <input class="confirmOrder-note" placeholder="订单备注" auto-focus/>
+      <input class="confirmOrder-note" value="{{memo}}" bindinput="memoChange" placeholder="订单备注" auto-focus/>
       <view class="confirmOrder-item">
         <text class="left">商品合计</text>
-        <text class="right">￥36.00</text>
+        <text class="right">￥{{groupIfo.groupon_price}}</text>
       </view>
       <view class="confirmOrder-item">
         <text class="left">运费(快递)</text>
-        <text class="right">￥36.00</text>
+        <text class="right">￥{{groupIfo.is_free_delivery=='true'?'0':'NAN'}}</text>
       </view>
       <view class="confirmOrder-item">
         <text class="left">应付款(含运费)</text>
-        <text class="right copeWith">￥36.00</text>
+        <text class="right copeWith">￥{{groupIfo.groupon_price}}</text>
       </view>
     </view>
   </view>
   <view class="confirmOrder-bottom">
     <text class="bottom-price">应付款</text>
-    <text class="bottom-price">￥36.00</text>
+    <text class="bottom-price">￥{{groupIfo.groupon_price}}</text>
     <view class="bottom-submitBtn" @tap="submitOrder">提交订单</view>
   </view>
 </template>
@@ -299,16 +299,28 @@
     data = {
       globalData:wepy.$instance.globalData,
       groupon_id:'',//团购id
-      addr_id:'',//收货地址id "47597"
-      addresses:{},//
+      addr_id:"",//收货地址id "47597"
+      addresses:{},//收货地址信息
+      groupIfo:{},//团购信息
+      memo:'',//备注
     };
 
     computed = {};
 
     methods = {
       submitOrder(){//提交订单
-
+        this.openGroupOrder()//开团
       },
+      memoChange: function (e) {
+        this.memo = e.detail.value
+        console.log(this.memo)
+      },
+      selectAddress(){
+        //'pages/user/address/address',
+        wepy.navigateTo({
+          url: '../../user/address/address'
+        })
+      }
     };
 
     events = {};
@@ -316,33 +328,7 @@
       var self =this
       var publicStr = wepy.$instance.getPublicData()
       let url = self.globalData.base_url+self.globalData.version_no+'/member/addresses'+publicStr+'&addr_id='+this.addr_id
-      //console.log(url)
-      wepy.request({
-        url:url,
-        method: "get",
-        header: {
-          "Content-Type": "application/json; charset=UTF-8"  //post
-        },
-        success: function(res) {
-          //console.log(res)
-          if (res.data.results.length>1){
-            res.data.results.map((item) =>{
-              if (item.def_addr=='1'){//默认地址
-                item.area = item.area.split(':')[1]
-                self.addresses = item
-              }
-            })
-          }
-         // console.log(self.addresses)
-          self.$apply()
-        }
-      })
-    }
-    getGroupProduct(){//获取商品信息  团购信息
-      var self =this
-      var publicStr = wepy.$instance.getPublicData()
-      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy'+publicStr+'&groupon_id='+this.groupon_id
-      console.log(url)
+      //console.log(self.addr_id)
       wepy.request({
         url:url,
         method: "get",
@@ -351,8 +337,121 @@
         },
         success: function(res) {
           console.log(res)
+          res.data.results.map((item) =>{
+            if (self.addr_id==item.addr_id){//存在选择id
+              item.area = item.area.split(':')[1]
+              self.addresses = item
+              return false
+            } else if(item.def_addr=='1'){//默认地址
+              item.area = item.area.split(':')[1]
+              self.addresses = item
+              self.addr_id  = item.addr_id
+              return false
+            }
+          })
 
+         console.log(self.addr_id)
           self.$apply()
+        }
+      })
+    }
+    getGroupProduct(){//获取商品信息  团购信息
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/'+this.groupon_id+publicStr
+      //console.log(url)
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          console.log(res)
+          var res = res.data.results[0]
+          console.log(res.groupon_image)
+
+          res.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+res.groupon_image
+          self.groupIfo = res
+          console.log(self.groupIfo)
+          self.$apply()
+        }
+      })
+    }
+    openGroupOrder(){//开团
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/order'+publicStr
+      console.log(url)
+
+      // buyType
+      // create: 开团
+      // join:蹭团
+      // invite:接受邀请
+
+      // is_tax，    是否要开发票
+      // tax_type，发票类型
+      // tax_content，发票内容
+      // tax_company，发票抬头
+      // tax_no，  发票税号
+      // tax_email，发票接收邮箱
+      // memo，      订单备注
+      var data = {
+        _method:'POST',
+        groupId:parseInt(this.groupon_id),
+        addressId:parseInt(this.addr_id),
+        buyType:'create',
+        payment:'wx_lite',
+        memo:'',//备注
+      }
+      wepy.request({
+        url:url,
+        method: "post",
+        data:data,
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          console.log(res)
+          var res = res.data
+          if (res.status == '1') {//开团成功
+            self.getPayData(res.results[0])
+          } else {
+            wx.showModal({
+              title: '订单确认出错',
+              content: res.status_txt,
+              success: function(res) {
+
+              }
+            })
+          }
+          self.$apply()
+        }
+      })
+    }
+    getPayData(backOrder){//获取支付信息
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/trade/charge'+publicStr
+      console.log(url)
+      console.log(backOrder)
+      var data = {
+        _method:'POST',
+        orderId:backOrder.player_order_id,
+        paymentMethod:'wx_lite',
+        successJumpUrl:'',
+        openid:'',
+      }
+      wepy.request({
+        url:url,
+        method: "post",
+        data:data,
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          console.log(res)
+
         }
       })
     }
