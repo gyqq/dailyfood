@@ -144,6 +144,9 @@
         wepy.reLaunch({
           url:'../groupBuying'
         })
+        // wepy.navigateTo({
+        //   url:'../../order/orderDetail/orderDetail'
+        // })
       },
       callService(){//联系客服
         wx.navigateTo({

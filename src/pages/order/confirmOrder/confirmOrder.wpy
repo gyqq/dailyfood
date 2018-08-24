@@ -223,7 +223,7 @@
   }
 </style>
 <template>
-  <!--订单确认-->
+  <!--团购订单确认-->
   <view class="confirmOrder">
     <view class="confirmOrder-one"></view>
     <view class="confirmOrder-address" @tap="selectAddress">
@@ -309,7 +309,10 @@
 
     methods = {
       submitOrder(){//提交订单
-        this.openGroupOrder()//开团
+        // this.openGroupOrder()//开团
+        wepy.navigateTo({
+          url: '../../groupBuying/groupState/groupState'
+        })
       },
       memoChange: function (e) {
         this.memo = e.detail.value

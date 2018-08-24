@@ -9,6 +9,9 @@
   /*box-sizing: border-box;*/
 /*}*/
 /*设置wepy-com-toast字体大小*/
+  page{
+    background-color: #f0eff5;
+  }
 .wetoast .wetoast__bd .wetoast__bd__title{
   font-size: 30rpx;
 }
@@ -37,7 +40,8 @@ export default class extends wepy.app {
       'pages/user/user',
       'pages/user/address/address',
       'pages/user/address/address_EA',
-      'pages/order/confirmOrder/confirmOrder'
+      'pages/order/confirmOrder/confirmOrder',
+      'pages/order/orderDetail/orderDetail'
     ],
     window: {
       backgroundTextStyle: 'light',
