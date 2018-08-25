@@ -1,0 +1,199 @@
+<style lang="less">
+  #invoice{
+    margin-bottom: 120rpx;
+  }
+  #invoice .left{
+    display: block;
+    float: left;
+  }
+  #invoice .right{
+    display: block;
+    float: right;
+  }
+  /*头部*/
+  #invoice .invoice-top{
+    background: white;
+    height: 140rpx;
+    font-size: 24rpx;
+    margin-top: 2rpx;
+  }
+  #invoice .invoice-top .top-title{
+    margin-left: 30rpx;
+    width: 100%;
+    color: #3e2123;
+    display: block;
+    margin-top: 32rpx;
+  }
+  #invoice .invoice-top .invoice-type{
+    width: 180rpx;
+    height: 40rpx;
+    line-height: 40rpx;
+    color: #3e2123;
+    margin-top: 20rpx;
+  }
+  /*#invoice .invoice-top .invoice-type:nth-child(1){*/
+    /*margin-left: 40rpx;*/
+  /*}*/
+  /*#invoice .invoice-top .invoice-type:nth-child(2){*/
+    /*margin-left: 103rpx;*/
+  /*}*/
+  #invoice .invoice-top .invoice-type image{
+    height: 32rpx;
+    width: 32rpx;
+  }
+  #invoice .invoice-top .invoice-type text{
+    margin-left: 20rpx;
+  }
+  /*填写信息*/
+  #invoice .invoice-info{
+    margin-top: 15rpx;
+  }
+  #invoice .invoice-info .info-item{
+    height: 90rpx;
+    margin-bottom: 2rpx;
+    line-height: 90rpx;
+    background: white;
+  }
+  #invoice .invoice-info .info-item .input-lable{
+    margin-left: 30rpx;
+    color: #402023;
+    font-size: 24rpx;
+    width: 105rpx;
+  }
+  #invoice .invoice-info .info-item .input-value{
+    border:none;
+    font-size: 24rpx;
+    color: #949494;
+    margin-top: 20rpx;
+    margin-left: 30rpx;
+    width: 500rpx;
+  }
+  /*发票介绍*/
+  #invoice .invoice-text{
+    font-size: 24rpx;
+    color:#949494 ;
+    width: 90%;
+    margin: 0 auto;
+    line-height: 50rpx;
+  }
+/*确认按钮*/
+  #invoice-bottom{
+    position: fixed;
+    bottom: 0;
+    background: #3e2020;
+    color: white;
+    width: 100%;
+    text-align: center;
+    height: 98rpx;
+    line-height: 98rpx;
+  }
+</style>
+<template>
+  <!--发票票信息-->
+  <view id="invoice">
+    <view class="invoice-top">
+      <text class="top-title">发票类型</text>
+        <view class="left invoice-type" style="margin-left: 40rpx">
+          <image @tap="selectBtn(1)" class="left" src="{{selectTyle==1?'../../image/icon/icon-select.png':'../../image/icon/warn-icon.png'}}"></image>
+          <text class="left" style="color:{{selectTyle==1?'#b5824d':'#3e2123'}}"> 不需要发票</text>
+        </view>
+      <view class="left invoice-type" style="margin-left: 103rpx">
+        <image @tap="selectBtn(2)" class="left" src="{{selectTyle==2?'../../image/icon/icon-select.png':'../../image/icon/warn-icon.png'}}"></image>
+        <text class="left" style="color:{{selectTyle==2?'#b5824d':'#3e2123'}}">公司发票</text>
+      </view>
+    </view>
+    <view class="invoice-info" wx:if="{{selectTyle==2}}">
+      <view class="info-item">
+        <text class="input-lable left">发票抬头</text>
+        <input value="{{invoiceInput.tax_company}}" bindinput="tax_companyChange" class="input-value left" placeholder="请输入发票抬头"/>
+      </view>
+      <view class="info-item">
+        <text class="input-lable left">税号</text>
+        <input value="{{invoiceInput.tax_no}}" bindinput="tax_noChange" class="input-value left" placeholder="请输入税号[必填]"/>
+      </view>
+      <view class="info-item">
+        <text class="input-lable left">邮箱</text>
+        <input value="{{invoiceInput.tax_email}}" bindinput="tax_emailChange" class="input-value left" placeholder="请输入邮箱[必填]"/>
+      </view>
+    </view>
+    <view class="invoice-text">
+      <text>
+        一、如何获得发票
+        请在下单时勾选公司发票自助开取（只提供电子发票），并留下邮箱，如需开具公司抬头发票，请准确填写公司名称；订单完成后，客服会在3-7个工作日内发送至您留下的邮箱中；此发票可用作单位报销凭证；内容按实际购买的产品进行开具
+      </text>
+      <text>
+        二、开发票注意事项
+        1、发票金额不能高于订单金额；
+        2、开具现金购物金额的发票，不含礼券、礼品卡、积分及优惠活动金额；
+        3、活动兑换商品、积分商品以及赠送的商品不提供发票；
+        4、一张订单只能开一次发票。
+        5、如需开具公司户头发票，需提供开票户头对应的营业执照、税务登记证或三证合一证件。
+      </text>
+      <text>
+        三、发票退/换/补
+        1、请在收到商品时一并检验发票，核对发票信息是否有误。如果收到的发票跟您提供的开票信息、订单信息不一致，请及时拨打客服电话400-168-8810，经客服审核后我们将按照核对过的信息补开发票并在3-7个工作日内给您发出；
+        2、补开换开期限30天内；
+        3、发生退货时，如果发生部分商品退货需要重新开具发票时，日尝食食会在3-7个工作日内给您发出；
+        4、在致电日尝食食客服要求补开发票的同时，请配合客服人员在电话中提供以下信息：订单号、发票抬头、发票内容、姓名、数量、订单、日期、金额、单价、电话、邮箱地址。
+      </text>
+    </view>
+  </view>
+  <view id="invoice-bottom">
+    确认
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class invoice extends wepy.page {
+    config = {
+      navigationBarTitleText: '发票信息'
+    };
+    components = {};
+
+   // mixins = [testMixin];
+
+    data = {
+      selectTyle:2,//1不需要发票  2公司发票
+      invoiceInput:{
+        tax_company:'',//发票抬头
+        tax_no:'', //发票税号
+        tax_email:'',//发票接收邮箱
+      }
+
+
+    };
+
+    computed = {};
+
+    methods = {
+      selectBtn(type){//选择
+        if (type==this.selectTyle) {//防止重复点击  选中
+          return false
+        }
+        if (this.selectTyle == 1){//更改为  公司发票
+          this.selectTyle=2
+        }else {//更改为  不需要发票
+          this.selectTyle = 1
+        }
+        this.$apply()
+      },
+      tax_companyChange(e){//发票抬头
+        this.invoiceInput.tax_company = e.detail.value
+      },
+      tax_noChange(e){//发票税号
+        this.invoiceInput.tax_no = e.detail.value
+      },
+      tax_emailChange(e){//发票邮箱
+        this.invoiceInput.tax_email = e.detail.value
+      },
+    };
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>

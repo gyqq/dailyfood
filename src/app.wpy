@@ -37,6 +37,7 @@ export default class extends wepy.app {
       'pages/groupBuying/groupState/groupState',
       'pages/webView/webView',
       'pages/secondkill/secondkill',
+      'pages/invoice/invoice',
       'pages/user/user',
       'pages/user/address/address',
       'pages/user/address/address_EA',

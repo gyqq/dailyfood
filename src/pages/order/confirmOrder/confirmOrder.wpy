@@ -256,7 +256,7 @@
         </view>
       </view>
     </view>
-    <view class="confirmOrder-invoice">
+    <view class="confirmOrder-invoice" @tap="jumpInvoice">
       <text class="left">发票</text>
       <image class="right invoice-img" src="../../../../image/icon/icon-rightArrow.png"></image>
       <text class="right invoice-type">不开发票</text>
@@ -318,10 +318,15 @@
         this.memo = e.detail.value
         console.log(this.memo)
       },
-      selectAddress(){
+      selectAddress(){//跳转到地址页
         //'pages/user/address/address',
         wepy.navigateTo({
           url: '../../user/address/address'
+        })
+      },
+      jumpInvoice(){//跳转到发票页
+        wepy.navigateTo({
+          url: '../../invoice/invoice'
         })
       }
     };
