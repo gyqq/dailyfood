@@ -228,6 +228,8 @@
           }
 
           WxParse.wxParse('article', 'html', img, self,1);
+          //imglist
+          //wepy.removeStorageSync('imglist')//详情页存储的介绍信息
           self.$apply()
         }
       })
@@ -238,6 +240,9 @@
       this.options = options
       this.getGroupList()
 
+    }
+    onShow(){
+      wepy.$instance.clearStorageData()
     }
   }
 </script>

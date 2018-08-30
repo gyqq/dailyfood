@@ -259,7 +259,7 @@
     <view class="confirmOrder-invoice" @tap="jumpInvoice">
       <text class="left">发票</text>
       <image class="right invoice-img" src="../../../../image/icon/icon-rightArrow.png"></image>
-      <text class="right invoice-type">不开发票</text>
+      <text class="right invoice-type">{{Invoice.is_tax==2?'开发票':'不开发票'}}</text>
     </view>
     <view class="confirmOrder-ifo">
       <input class="confirmOrder-note" value="{{memo}}" bindinput="memoChange" placeholder="订单备注" auto-focus/>
@@ -302,6 +302,7 @@
       addr_id:"",//收货地址id "47597"
       addresses:{},//收货地址信息
       groupIfo:{},//团购信息
+      Invoice:{},//发票
       memo:'',//备注
     };
 
@@ -310,18 +311,21 @@
     methods = {
       submitOrder(){//提交订单
         // this.openGroupOrder()//开团
+        // wepy.removeStorageSync('invoice')//清除发票信息
+        // wepy.removeStorageSync('addr_id')//清除所选地址id
+        wepy.$instance.clearStorageData()
         wepy.navigateTo({
           url: '../../groupBuying/groupState/groupState'
         })
       },
-      memoChange: function (e) {
+      memoChange: function (e) {//备注
         this.memo = e.detail.value
         console.log(this.memo)
       },
       selectAddress(){//跳转到地址页
         //'pages/user/address/address',
         wepy.navigateTo({
-          url: '../../user/address/address'
+          url: '../../user/address/address?type=select'
         })
       },
       jumpInvoice(){//跳转到发票页
@@ -335,6 +339,8 @@
     getAddress(){//获得收货地址
       var self =this
       var publicStr = wepy.$instance.getPublicData()
+      //addr_id
+      this.addr_id = wx.getStorageSync('addr_id') ||''
       let url = self.globalData.base_url+self.globalData.version_no+'/member/addresses'+publicStr+'&addr_id='+this.addr_id
       //console.log(self.addr_id)
       wepy.request({
@@ -344,21 +350,33 @@
           "Content-Type": "application/json; charset=UTF-8"  //post
         },
         success: function(res) {
+          console.log('收货地址信息===')
           console.log(res)
-          res.data.results.map((item) =>{
-            if (self.addr_id==item.addr_id){//存在选择id
-              item.area = item.area.split(':')[1]
-              self.addresses = item
-              return false
-            } else if(item.def_addr=='1'){//默认地址
-              item.area = item.area.split(':')[1]
-              self.addresses = item
-              self.addr_id  = item.addr_id
-              return false
-            }
-          })
+          console.log('收货地址信息===')
+          if (self.addr_id) {//选择后的地址
+            res.data.results.map((item) =>{
+              if (item.addr_id ==self.addr_id) {
+                item.area = item.area.split(':')[1]
+                self.addresses = item
+              }
+            })
+          }else {//初始进来的地址
+            res.data.results.map((item) =>{
+              if (self.addr_id==item.addr_id){//存在选择id
+                item.area = item.area.split(':')[1]
+                self.addresses = item
+                return false
+              } else if(item.def_addr=='1'){//默认地址
+                item.area = item.area.split(':')[1]
+                self.addresses = item
+                self.addr_id  = item.addr_id
+                return false
+              }
+            })
+          }
 
-         console.log(self.addr_id)
+
+         //console.log(self.addr_id)
           self.$apply()
         }
       })
@@ -375,13 +393,15 @@
           "Content-Type": "application/json; charset=UTF-8"  //post
         },
         success: function(res) {
-          console.log(res)
+          //console.log(res)
           var res = res.data.results[0]
-          console.log(res.groupon_image)
+          //console.log(res.groupon_image)
 
           res.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+res.groupon_image
           self.groupIfo = res
+          console.log('团购信息===')
           console.log(self.groupIfo)
+          console.log('团购信息===')
           self.$apply()
         }
       })
@@ -463,11 +483,27 @@
         }
       })
     }
+    setInvoice(){//设置发票信息
+      var invoice = wx.getStorageSync('invoice') ||{}
+      this.Invoice = invoice
+      this.$apply()
+      console.log('发票信息===')
+      console.log(this.Invoice)
+      console.log('发票信息===')
+    }
     onLoad(options) {
+      //console.log('onload')
       this.groupon_id = options.groupon_id
-      this.getAddress()//收货地址
       this.getGroupProduct()//团购信息
       //console.log(options)
+
     }
+    onShow(){
+      //console.log('onshow')
+      this.getAddress()//收货地址
+      this.setInvoice()//设置发票信息
+    }
+
+
   }
 </script>

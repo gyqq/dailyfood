@@ -81,7 +81,7 @@
       <view class="left item-tip">
         {{item.tip}}
       </view>
-      <view class="left item-ifo">
+      <view class="left item-ifo" @tap="selectAddress({{item}})">
         <view class="item-basicIfo">
           <text>{{item.name}}</text>
           <text>{{item.mobile}}</text>
@@ -114,6 +114,7 @@
     //mixins = [testMixin];
 
     data = {
+      options:{},//select 订单确认页跳转过来,进行选择地址
       globalData:wepy.$instance.globalData,
       addressList:[],//收货地址数据
     };
@@ -126,6 +127,19 @@
         wepy.navigateTo({
           url: '../../user/address/address_EA?addr_id='+item.addr_id
         })
+      },
+      selectAddress(item){//选择 收货地址跳转 订单确认页
+        console.log(item)
+        if (this.options.type=='select'){//收货地址跳转
+          wepy.setStorageSync('addr_id',item.addr_id)
+          // wepy.redirectTo({
+          //   url: '../../order/confirmOrder/confirmOrder'
+          // })
+          wx.navigateBack({
+            delta: 1
+          })
+        }
+
       },
     };
     getAddresList(){//获取全部收货地址
@@ -155,6 +169,8 @@
     events = {};
 
     onLoad(options) {
+      this.options = options
+      //console.log(this.options)
       this.getAddresList()//获取全部收货地址
     }
   }

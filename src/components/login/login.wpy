@@ -302,7 +302,20 @@
             console.log(res)
             wepy.setStorageSync('userInfo', data)
             wepy.$instance.globalData.userInfo = data
+
+            // wx.request({//获取openid
+            //   url: 'https://api.weixin.qq.com/sns/jscode2session?appid=wx32cebfbe779cca7d&secret=6c10be0f2065876fbca2211f93b0895e&js_code='+ res.code +'&grant_type=authorization_code',
+            //   data: {},
+            //   header: {
+            //     'content-type': 'application/json'
+            //   },
+            //   success: function(res) {
+            //     //openid = res.data.openid //返回openid
+            //     console.log('返回openid='+res.data.openid)
+            //   }
+            // })
             self.makeSure(self.loginType)
+
           }
         })
         // wepy.getUserInfo({

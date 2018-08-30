@@ -199,7 +199,7 @@
         console.log('跳转')
         this.$emit('closeCengGroup',false)
         wepy.navigateTo({
-          url: '../../order/confirmOrder/confirmOrder'
+          url: '../../order/confirmOrder/confirmOrder?groupon_id='+this.groupDetail.groupon_id
         })
         // this.$emit('goConfirmOrder')
       },

@@ -6,6 +6,7 @@
     <view>
       我的
     </view>
+    <view @tap="myGroup">我的团购</view>
     <tabbar></tabbar>
   </view>
 </template>
@@ -28,7 +29,13 @@
 
     computed = {};
 
-    methods = {};
+    methods = {
+      myGroup(){//我的团购
+        wepy.navigateTo({
+          url: './myGroup/myGroup'
+        })
+      },
+    };
 
     events = {};
 

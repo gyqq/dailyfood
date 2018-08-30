@@ -39,6 +39,7 @@ export default class extends wepy.app {
       'pages/secondkill/secondkill',
       'pages/invoice/invoice',
       'pages/user/user',
+      'pages/user/myGroup/myGroup',
       'pages/user/address/address',
       'pages/user/address/address_EA',
       'pages/order/confirmOrder/confirmOrder',
@@ -128,6 +129,21 @@ export default class extends wepy.app {
     //console.log('公共参数获取')
     return publicStr
   }
+
+  clearStorageData(){//清除存储数据
+    //订单确认页 confirmOrder
+    wepy.removeStorageSync('invoice')//清除发票信息
+    wepy.removeStorageSync('addr_id')//清除所选地址id
+    //团购详情页 groupDetails
+    wepy.removeStorageSync('imglist')//详情页存储的介绍信息
+  }
+
+
+
+
+
+
+
   sleep (s) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {

@@ -86,6 +86,7 @@
     text-align: center;
     height: 98rpx;
     line-height: 98rpx;
+    font-size: 28rpx;
   }
 </style>
 <template>
@@ -94,11 +95,11 @@
     <view class="invoice-top">
       <text class="top-title">发票类型</text>
         <view class="left invoice-type" style="margin-left: 40rpx">
-          <image @tap="selectBtn(1)" class="left" src="{{selectTyle==1?'../../image/icon/icon-select.png':'../../image/icon/warn-icon.png'}}"></image>
+          <image @tap="selectBtn(1)" class="left" src="{{selectTyle==1?'../../image/icon/icon-select.png':'../../image/icon/icon-noneSelect.png'}}"></image>
           <text class="left" style="color:{{selectTyle==1?'#b5824d':'#3e2123'}}"> 不需要发票</text>
         </view>
       <view class="left invoice-type" style="margin-left: 103rpx">
-        <image @tap="selectBtn(2)" class="left" src="{{selectTyle==2?'../../image/icon/icon-select.png':'../../image/icon/warn-icon.png'}}"></image>
+        <image @tap="selectBtn(2)" class="left" src="{{selectTyle==2?'../../image/icon/icon-select.png':'../../image/icon/icon-noneSelect.png'}}"></image>
         <text class="left" style="color:{{selectTyle==2?'#b5824d':'#3e2123'}}">公司发票</text>
       </view>
     </view>
@@ -138,7 +139,7 @@
       </text>
     </view>
   </view>
-  <view id="invoice-bottom">
+  <view @tap="confirmBtn" id="invoice-bottom">
     确认
   </view>
 </template>
@@ -155,7 +156,7 @@
    // mixins = [testMixin];
 
     data = {
-      selectTyle:2,//1不需要发票  2公司发票
+      selectTyle:1,//1不需要发票  2公司发票
       invoiceInput:{
         tax_company:'',//发票抬头
         tax_no:'', //发票税号
@@ -188,10 +189,53 @@
       tax_emailChange(e){//发票邮箱
         this.invoiceInput.tax_email = e.detail.value
       },
+      confirmBtn(){//确认
+          // this.invoiceInput= {
+          //   tax_company:'',//发票抬头
+          //   tax_no:'', //发票税号
+          //   tax_email:'',//发票接收邮箱
+          // }
+        //console.log(this.is_email(this.invoiceInput.tax_email))
+        if (!this.is_email(this.invoiceInput.tax_email)) {//邮箱 不合法
+          wx.showToast({
+            title: '请输入正确邮箱',
+            icon: 'success',
+            duration: 2000
+          })
+          return false
+        }
+        var invoice = {
+          is_tax:this.selectTyle,//1 不开 2公司发票
+          tax_company:this.invoiceInput.tax_company,//发票抬头
+          tax_no:this.invoiceInput.tax_company, //发票税号
+          tax_email:this.invoiceInput.tax_email,//发票接收邮箱
+        }
+        wepy.setStorageSync('invoice',invoice)
+        // wepy.redirectTo({
+        //   url: '../order/confirmOrder/confirmOrder'
+        // })
+        wx.navigateBack({
+          delta: 1
+        })
+
+      }
     };
 
     events = {};
+    is_email (email){//验证邮箱合法性
+      //console.log(email)
+      var re = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
+      if ( email == "") {
+        return false;
+      } else {
+        if (re.test(email)) {//合法
+          return true;
+        }else {//不合法
+          return false;
+        }
+      }
 
+    }
     onLoad() {
 
     }
