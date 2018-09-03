@@ -303,33 +303,14 @@
             wepy.setStorageSync('userInfo', data)
             wepy.$instance.globalData.userInfo = data
 
-            // wx.request({//获取openid
-            //   url: 'https://api.weixin.qq.com/sns/jscode2session?appid=wx32cebfbe779cca7d&secret=6c10be0f2065876fbca2211f93b0895e&js_code='+ res.code +'&grant_type=authorization_code',
-            //   data: {},
-            //   header: {
-            //     'content-type': 'application/json'
-            //   },
-            //   success: function(res) {
-            //     //openid = res.data.openid //返回openid
-            //     console.log('返回openid='+res.data.openid)
-            //   }
-            // })
-            self.makeSure(self.loginType)
+
+            self.makeSure(self.loginType,res)//登录接口
+
 
           }
         })
-        // wepy.getUserInfo({
-        //   //获取信息
-        //   success (res) {
-        //     wepy.setStorageSync('userInfo', res)
-        //     wepy.$instance.globalData.userInfo = res
-        //     self.makeSure(self.loginType)
-        //   },
-        //   fail (res) {
-        //     console.log(res)
-        //   }
-        // })
       },
+
       closeLogin(){
         console.log('关闭')
         //this.isShow = false
@@ -357,7 +338,7 @@
       var pattern = /^1[345678]\d{9}$/;
       return pattern.test(phone);
     }
-    makeSure(type){//确定
+    makeSure(type,code){//确定
       var self =this
       var loginIfo = this.loginIfo
 
@@ -409,6 +390,7 @@
               duration: 2000
             })
            //self.isShow = false
+            self.getOpenid(code)//过去openid
             self.$emit('closeLogin',false)
             self.$apply();
             //console.log(self.isShow)
@@ -418,7 +400,26 @@
       })
     }
     events = {};
+    getOpenid(res){
+      //res.code
+      var self =this
+      var publicStr = wepy.$instance.getPublicData().split('access_token=')[1]
 
+      wepy.request({//获取openid
+        url: self.globalData.base_url+self.globalData.version_no+'/small/openid?access_token='+publicStr+'&code='+res.code,
+        data: {},
+        method: "get",
+        header: {
+          'content-type': 'application/json'
+        },
+        success: function(res) {
+          console.log(res)
+          //openid = res.data.openid //返回openid
+          wepy.setStorageSync('openid', res.data.results[0].openid)
+          console.log('返回openid='+res.data.results[0].openid)
+        }
+      })
+    }
     onLoad() {
       //console.log('登录调用')
       //console.log(this.isShow)

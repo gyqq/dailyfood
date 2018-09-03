@@ -257,34 +257,34 @@
       <view class="address">
         <image class="address-icon left" src="../../../image/order/icon-people.png"></image>
         <text class="address-lable left">收货人:</text>
-        <text class="address-value left">某某某</text>
-        <text class="right address-phone">18866668888</text>
+        <text class="address-value left">{{orderDetail.ship_name}}</text>
+        <text class="right address-phone">{{orderDetail.ship_tel}}</text>
       </view>
       <view class="address">
         <image class="address-icon left" style="margin-top: 15rpx" src="../../../image/order/icon-address.png"></image>
         <view class="left">
           <text class="address-lable" style="margin-left: 0">收货地址:</text>
-          <text class="address-value">上海 上海市 长宁区 新泾镇 金钟路631弄2号楼3楼</text>
+          <text class="address-value">{{orderDetail.ship_area}}</text>
         </view>
 
       </view>
       <view class="address">
         <image class="address-icon left" src="../../../image/order/icon-invoice.png"></image>
         <text class="address-lable left">发票抬头:</text>
-        <text class="address-value left">无</text>
+        <text class="address-value left">{{orderDetail.tax_type=="false"?'无':'有'}}</text>
       </view>
     </view>
     <view class="orderDetail-product">
       <view class="product-text">订单商品列表</view>
       <view class="confirmOrder-productIfo">
         <view class="pro-item">
-          <image src="{{groupIfo.groupon_image}}" class="pro-img left"></image>
+          <image src="{{orderDetail.groups.groupon_image}}" class="pro-img left"></image>
           <view class="pro-ifo left">
-            <text class="pro-title">刘叔家的油桃</text>
+            <text class="pro-title">{{orderDetail.groups.groupon_name}}</text>
             <view class="pro-price">
-              <text class="pro-num">2人拼团价</text>
-              <text class="pro-groupPrice">￥36.00</text>
-              <text class="pro-originalPrice">￥42.00</text>
+              <text class="pro-num">{{orderDetail.groups.person}}人拼团价</text>
+              <text class="pro-groupPrice">￥{{orderDetail.groups.groupon_price}}</text>
+              <text class="pro-originalPrice">￥{{orderDetail.groups.origin_price}}</text>
             </view>
           </view>
         </view>
@@ -318,12 +318,12 @@
     <view class="orderDetail-ifo">
       <view class="ifo">
         <text class="left">订单编号:</text>
-        <text class="left">1231342324343545656</text>
+        <text class="left">{{orderDetail.out_trade_no}}</text>
         <text class="right" @tap="copyBtn">复制</text>
       </view>
       <view class="ifo">
         <text class="left">创建时间:</text>
-        <text class="left">2018-02-25 15:09:21</text>
+        <text class="left">{{orderDetail.createtime}}</text>
       </view>
       <view class="ifo">
         <text class="left">付款时间:</text>
@@ -346,7 +346,7 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-
+  import util from '@/mixins/util'
   export default class orderDetail extends wepy.page {
     config = {
       navigationBarTitleText: '订单详情'
@@ -356,8 +356,11 @@
    // mixins = [testMixin];
 
     data = {
+      globalData:wepy.$instance.globalData,
+      order_id:'',//订单id
       orderType:'',//group  kill
       orderState:'',//订单状态:团购状态: 待付款,待成团,待发货,待收货,
+      orderDetail:{},//订单详情
     };
 
     computed = {};
@@ -370,7 +373,7 @@
       },
       copyBtn(){//复制
         wepy.setClipboardData({
-          data: '1231342324343545656',
+          data: this.orderDetail.out_trade_no,
           success: function(res) {
 
           }
@@ -379,9 +382,44 @@
     };
 
     events = {};
+    getOrderDetail(){
+      //delivering //待收货
+      // finish//已完成
+      // cancel//已取消
+      // dead //已作废
+      // "active";//组团成功
+      // "pendding";//进行中
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/order/'+this.order_id+publicStr
+      console.log(url)
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8",  //post
+        },
+        success: function(res) {
+          //console.log(res)
+          var data = res.data.results[0]
+          //收货地址整理
+          data.ship_area = data.ship_area.split('mainland:')[1].split(':')+data.ship_addr
+          //图片
+          if (data.groups) {
+            data.groups.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+data.groups.groupon_image
+          }
+          //创建时间
+          data.createtime = util.getMyDate(parseInt(data.createtime))
+          self.orderDetail = data
+          console.log(self.orderDetail)
+          self.$apply()
+        }
+      })
+    }
 
-    onLoad() {
-
+    onLoad(options) {
+      this.order_id = options.order_id
+      this.getOrderDetail()
     }
   }
 </script>

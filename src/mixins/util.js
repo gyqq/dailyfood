@@ -14,7 +14,27 @@ function clearStorageData(){
   wepy.removeStorageSync('imglist')//详情页存储的介绍信息
 
 }
+//时间戳转时间格式==开始
+function getMyDate(str){
+  var oDate = new Date(str*1000),
+    oYear = oDate.getFullYear(),
+    oMonth = oDate.getMonth()+1,
+    oDay = oDate.getDate(),
+    oHour = oDate.getHours(),
+    oMin = oDate.getMinutes(),
+    oSen = oDate.getSeconds(),
+    oTime = oYear +'-'+ getzf(oMonth) +'-'+ getzf(oDay) +' '+ getzf(oHour) +':'+ getzf(oMin) +':'+getzf(oSen);//最后拼接时间
+  return oTime;
+};
+function getzf(num){//补0操作
+  if(parseInt(num) < 10){
+    num = '0'+num;
+  }
+  return num;
+}
+//时间戳转时间格式==结束
 module.exports = {
   // getPublicData:getPublicData
-  clearStorageData:clearStorageData
+  clearStorageData:clearStorageData,
+  getMyDate:getMyDate
 }

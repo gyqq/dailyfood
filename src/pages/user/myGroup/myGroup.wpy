@@ -132,28 +132,40 @@
       <text style="flex: 2" @tap="changeSelect(3)" class="{{selectState==3?'chageText':''}}">已取消</text>
     </view>
     <view class="group-list">
-      <view class="item">
+      <view class="item" wx:for="{{groupList}}" wx:for-index="index" wx:for-item="item" wx:key="id">
         <view class="item-header">
-          <text class="left">2人团</text>
-          <text class="right">待付款</text>
+          <text class="left">{{item.groups.person}}人团</text>
+          <text class="right">{{item.typeText}}</text>
         </view>
-        <view class="pro-item">
-          <image src="" class="pro-img left"></image>
+        <view class="pro-item" @tap="goOrderDetail({{item}})">
+          <image src="{{item.groups.groupon_image}}" class="pro-img left"></image>
           <view class="pro-ifo left">
-            <text class="pro-title">刘叔家的油桃</text>
+            <text class="pro-title">{{item.groups.groupon_name}}</text>
             <view class="pro-price">
-              <text class="pro-num">2人拼团价</text>
-              <text class="pro-groupPrice">￥36.00</text>
-              <text class="pro-originalPrice">￥42.00</text>
+              <text class="pro-num">{{item.groups.person}}人拼团价</text>
+              <text class="pro-groupPrice">￥{{item.groups.groupon_price}}</text>
+              <text class="pro-originalPrice">￥{{item.groups.origin_price}}</text>
             </view>
           </view>
         </view>
         <view class="item-text">
           共1件商品 合计: <text>￥36.00</text> (含运费￥0.00)
         </view>
-        <view class="item-operation">
-          <view class="btn color">邀请好友</view>
+        <view class="item-operation" wx:if="{{selectState==1}}">
+          <view class="btn color" wx:if="{{item.typeText=='待成团'}}">邀请好友</view>
+          <view class="btn" wx:if="{{item.typeText!='待付款' &&item.typeText!='(团购结束)已过期' &&item.typeText!='(未支付)已过期'}}">拼团详情</view>
+          <view class="btn" wx:if="{{item.typeText=='待付款'}}">去付款</view>
+          <view class="btn" wx:if="{{item.typeText=='待付款' ||item.typeText=='(团购结束)已过期' ||item.typeText=='(未支付)已过期'}}">取消团购</view>
+          <view class="btn" wx:if="{{item.typeText=='待收货'}}">查看物流</view>
+
+
+
+        </view>
+        <view class="item-operation" wx:if="{{selectState==2}}">
           <view class="btn">拼团详情</view>
+        </view>
+        <view class="item-operation" wx:if="{{selectState==3}}">
+          <view class="btn">取消团购</view>
         </view>
       </view>
     </view>
@@ -173,7 +185,13 @@
     //mixins = [testMixin];
 
     data = {
+      globalData:wepy.$instance.globalData,
       selectState:1,
+      allGroupList:[],//全部数据
+      groupList:[],//团购列表
+      penddingGroup:[],//进行中
+      finishGroup:[],//已完成
+      cancelGroup:[],//已取消
     };
 
     computed = {};
@@ -181,14 +199,114 @@
     methods = {
       changeSelect(type){//头部状态更改   //1:进行中  2:已完成  3:已取消
         this.selectState = type
+        this.groupList=[]
+        switch (type){
+          case '1'://进行中
+            this.groupList = this.penddingGroup;
+            break;
+          case '2'://已完成
+            this.groupList = this.finishGroup;
+            break;
+          case '3'://已取消
+            this.groupList = this.cancelGroup;
+            break;
+          default:
+            break;
+        }
         this.$apply()
-      }
+      },
+      goOrderDetail(item){//跳转订单详情
+        console.log(item.order_id)
+        wepy.navigateTo({
+          url: '../../order/orderDetail/orderDetail?order_id='+item.order_id
+        })
+      },
     };
 
     events = {};
+    getGtoupList(){//团购订单列表
+      var self = this
+      //delivering //待收货
+      // finish//已完成
+      // cancel//已取消
+      // dead //已作废
+      // "active";//组团成功
+      // "pendding";//进行中
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/order'+publicStr
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8",  //post
+        },
+        success: function(res) {
+          self.groupList=[]
+          res.data.results.map((item) =>{
+            if (item.groups) {
+              item.groups.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+item.groups.groupon_image
+            }
+            //大分类  进行中,已完成,已取消
+            if (item.status=='pendding' || item.status=='active') {//进行中
+              self.penddingGroup.push(item)
+            }
+            if (item.status=='finish' || item.status=='uncommented') {//已完成
+              self.finishGroup.push(item)
+            }
+            if (item.status=='cancel' ||item.status=='dead') {//已取消
+              self.cancelGroup.push(item)
+            }
+            //当status为active时用来区分待发货,待收货，然后为pedding时判断待付款,待成团、已过期
 
+            //小分类  进行中:(待付款,待成团,待发货,待收货)
+
+            if (item.status=='pendding' || item.status=='active') {//进行中
+
+              //组团成功
+              if (item.status=='active') {//分为 待收货  待发货
+                if (item.ship_status=='0') {//待发货
+                  item.typeText = '待发货'
+                }else if (item.ship_status=='1') {//待收货
+                  item.typeText = '待收货'
+                }
+              }else {//组团不成功  (未支付,已过期,待成团)  pendding
+                var  create_time= parseInt(item.groups.create_time)
+                var  remain_time = parseInt(item.groups.remain_time)
+                var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+                if (create_time+remain_time> currentInterval) {//组团未过期
+                  if (item.pay_status=='1') {//组团中
+                    item.typeText = '待成团'
+                  }else {//未支付
+                    //固定制服时间为120分钟  超出后不能支付
+                    if (create_time+7200<currentInterval) {//超出支付时间
+                      item.typeText = '(未支付)已过期'
+                    }else {
+                      item.typeText = '待付款'
+                    }
+                  }
+                }else {//组团已过期
+                  item.typeText = '(团购结束)已过期'
+                }
+              }
+            }
+
+
+          })
+          // penddingGroup:[],//进行中
+          //   finishGroup:[],//已完成
+          //   cancelGroup:[],//已取消
+          //self.allGroupList = res.data.results
+          // console.log(self.groupList)
+          //console.log(self.cancelGroup)
+          self.groupList = self.penddingGroup
+          //console.log(res.data.results)
+          console.log(self.groupList)
+          self.$apply()
+        }
+      })
+    }
     onLoad() {
-
+      this.getGtoupList()
     }
   }
 </script>
