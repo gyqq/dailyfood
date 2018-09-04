@@ -159,7 +159,7 @@
 </style>
 <template>
   <view class="groupState">
-    <view class="groupState-one">恭喜您,蹭团成功</view>
+    <view class="groupState-one">{{groupTitle}}</view>
     <view class="confirmOrder-productIfo">
       <view class="pro-item">
         <image src="https://ec-api.shinho.net.cn/v1/img/" class="pro-img left"></image>
@@ -214,7 +214,11 @@
     //mixins = [testMixin];
 
     data = {
+      globalData:wepy.$instance.globalData,
+      order_id:'',//订单号
+      groupTitle:'',//标题
       groupState:'',
+      orderDetail:{},
     };
 
     computed = {};
@@ -228,13 +232,125 @@
     };
 
     events = {};
+    getOrderDetail(){
+      //delivering //待收货
+      // finish//已完成
+      // cancel//已取消
+      // dead //已作废
+      // "active";//组团成功
+      // "pendding";//进行中
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/order/'+this.order_id+publicStr
+      console.log(url)
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8",  //post
+        },
+        success: function(res) {
+          //console.log(res)
+          var data = res.data.results[0]
+          //图片
+          if (data.groups) {
+            data.groups.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+data.groups.groupon_image
+          }
 
-    onLoad() {
+          if (data.status=='finish' || data.status=='uncommented') {//已完成
+            data.typeText = '已完成'
+          }
+          if (data.status=='cancel' ||data.status=='dead') {//已取消
+            data.typeText = '已取消'
+          }
+          //当status为active时用来区分待发货,待收货，然后为pedding时判断待付款,待成团、已过期
+          //小分类  进行中:(待付款,待成团,待发货,待收货)
+          if (data.status=='pendding' || data.status=='active') {//进行中
+            //组团成功
+            if (data.status=='active') {//分为 待收货  待发货
+              if (data.ship_status=='0') {//待发货
+                data.typeText = '待发货'
+              }else if (data.ship_status=='1') {//待收货
+                data.typeText = '待收货'
+              }
+            }else {//组团不成功  (未支付,已过期,待成团)  pendding
+              var  create_time= parseInt(data.groups.create_time)
+              var  remain_time = parseInt(data.groups.remain_time)
+              var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+              var all = create_time+remain_time
+
+              if (create_time+remain_time> currentInterval) {//组团未过期
+                if (data.pay_status=='1') {//组团中
+                  data.typeText = '待成团'
+                }else {//未支付
+                  //固定制服时间为120分钟  超出后不能支付
+                  if (create_time+7200<currentInterval) {//超出支付时间
+                    data.typeText = '(未支付)已过期'
+                  }else {
+                    data.typeText = '待付款'
+                  }
+                }
+              }else {//组团已过期
+                data.typeText = '(团购结束)已过期'
+              }
+            }
+          }
+          data.typeText='已完成' //测试 变更团购状态
+          switch (data.typeText){
+            case '已完成'://
+              console.log('已完成')
+              wepy.setNavigationBarTitle({
+                title: '蹭团成功'
+              })
+              self.groupTitle = '恭喜您,蹭团成功!'
+              break;
+            case '已取消'://
+              console.log('已取消')
+
+              data.color = '#3f2021'
+              break;
+            case '待发货'://
+              console.log('待发货')
+
+              break;
+            case '待收货'://
+              console.log('待收货')
+
+              break;
+            case '待成团'://
+              console.log('待成团')
+
+              break;
+            case '(未支付)已过期'://
+              console.log('(未支付)已过期')
+
+              break;
+            case '待付款'://
+              console.log('待付款')
+
+              break;
+            case '(团购结束)已过期'://
+              console.log('(团购结束)已过期')
+
+              break;
+
+            default:
+              break;
+          }
+
+          self.orderDetail = data
+          // console.log(self.orderDetail.typeText)
+          console.log(self.orderDetail)
+          self.$apply()
+        }
+      })
+    }
+    onLoad(options) {
       //蹭团成功  开团成功   团购成功   团购失败
       this.groupState = '团购失败'
-      wepy.setNavigationBarTitle({
-        title: this.groupState
-      })
+      this.order_id = options.order_id
+      this.getOrderDetail()
+
     }
   }
 </script>

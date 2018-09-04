@@ -12,7 +12,7 @@
   }
   /*顶部*/
   .orderDetail .orderDetail-one{
-    height: 150rpx;
+    height: 170rpx;
     color: white;
     background-size:100% ;
     background-repeat: no-repeat;
@@ -36,10 +36,12 @@
   .orderDetail .orderDetail-one text:nth-child(1){
     font-size: 28rpx;
     margin-top: 40rpx;
+    letter-spacing: 3rpx;
   }
   .orderDetail .orderDetail-one text:nth-child(2){
     font-size: 20rpx;
     margin-top: 20rpx;
+    letter-spacing: 2rpx;
   }
   /*地址*/
   .orderDetail .orderDetail-address{
@@ -249,9 +251,9 @@
 <template>
   <!--订单详情-->
   <view class="orderDetail">
-    <view class="orderDetail-one" id="bg_groupOrder">
-      <text >团购成功</text>
-      <text >您的每一次肯定都将成为我们前进的动力</text>
+    <view class="orderDetail-one" id="{{bagImgId}}">
+      <text style="color:{{orderDetail.color}}">{{bagTitle}}</text>
+      <text style="color:{{orderDetail.color}}">{{bagText}}</text>
     </view>
     <view class="orderDetail-address">
       <view class="address">
@@ -294,20 +296,20 @@
     <view class="orderDetail-money">
       <view class="confirmOrder-item">
         <text class="left">商品合计</text>
-        <text class="right">￥36.00</text>
+        <text class="right">￥{{orderDetail.cost_freight}}</text>
       </view>
       <view class="confirmOrder-item">
         <text class="left">运费(快递)</text>
         <!--{{groupIfo.is_free_delivery=='true'?'0':'NAN'}}-->
-        <text class="right">￥0.00</text>
+        <text class="right">￥{{orderDetail.total_amount}}</text>
       </view>
       <view class="confirmOrder-item">
         <text class="left">实付款(含运费)</text>
-        <text class="right copeWith">￥36.00</text>
+        <text class="right copeWith">￥{{orderDetail.final_amount}}</text>
       </view>
       <view class="confirmOrder-item">
         <text class="left">返还积分</text>
-        <text class="right">￥36.00</text>
+        <text class="right">￥{{orderDetail.score_g}}</text>
       </view>
     </view>
     <view class="orderDetail-Service">
@@ -315,7 +317,7 @@
         联系客服
       </view>
     </view>
-    <view class="orderDetail-ifo">
+    <view class="orderDetail-ifo" style="padding-bottom: 10rpx">
       <view class="ifo">
         <text class="left">订单编号:</text>
         <text class="left">{{orderDetail.out_trade_no}}</text>
@@ -325,21 +327,45 @@
         <text class="left">创建时间:</text>
         <text class="left">{{orderDetail.createtime}}</text>
       </view>
-      <view class="ifo">
+      <view class="ifo" wx:if="{{orderDetail.typeText=='待成团' || orderDetail.typeText=='待发货' ||orderDetail.typeText=='待收货' ||orderDetail.typeText=='已完成'}}">
         <text class="left">付款时间:</text>
-        <text class="left">2018-02-25 15:09:21</text>
+        <text class="left"></text>
       </view>
-      <view class="ifo">
+      <view class="ifo" wx:if="{{orderDetail.typeText=='待收货' ||orderDetail.typeText=='已完成'}}">
         <text class="left">发货时间:</text>
-        <text class="left">2018-02-25 15:09:21</text>
+        <text class="left"></text>
       </view>
-      <view class="ifo">
+      <view class="ifo" wx:if="{{orderDetail.typeText=='已完成'}}">
         <text class="left">收货时间:</text>
-        <text class="left">2018-02-25 15:09:21</text>
+        <text class="left"></text>
+      </view>
+      <view class="ifo" wx:if="{{orderDetail.typeText=='已取消' || orderDetail.typeText=='(团购结束)已过期' ||orderDetail.typeText=='(未支付)已过期'}}">
+        <text class="left">关闭时间:</text>
+        <text class="left"></text>
       </view>
     </view>
     <view class="orderDetail-operation">
-      <text class="operation-btn right">拼团详情</text>
+      <view wx:if="{{orderDetail.typeText=='待付款'}}">
+        <text class="operation-btn right" style="color:#b58151;border: 1rpx solid #b58151">去付款</text>
+        <text class="operation-btn right">取消团购</text>
+      </view>
+      <view wx:if="{{orderDetail.typeText=='待成团'}}">
+        <text class="operation-btn right" style="color:#b58151;border:1rpx solid #b58151">邀请好友</text>
+        <text class="operation-btn right">拼团详情</text>
+      </view>
+      <view wx:if="{{orderDetail.typeText=='待发货'}}">
+        <text class="operation-btn right">拼团详情</text>
+      </view>
+      <view wx:if="{{orderDetail.typeText=='待收货'}}">
+        <text class="operation-btn right">查看物流</text>
+        <text class="operation-btn right">拼团详情</text>
+      </view>
+      <view wx:if="{{orderDetail.typeText=='已完成'}}">
+        <text class="operation-btn right">拼团详情</text>
+      </view>
+      <view wx:if="{{orderDetail.typeText=='已取消' ||orderDetail.typeText=='(团购结束)已过期' || orderDetail.typeText=='(未支付)已过期'}}">
+        <text class="operation-btn right">删除订单</text>
+      </view>
     </view>
   </view>
 </template>
@@ -357,6 +383,9 @@
 
     data = {
       globalData:wepy.$instance.globalData,
+      bagImgId:'',//背景图id
+      bagTitle:'',//标题
+      bagText:'',//描述
       order_id:'',//订单id
       orderType:'',//group  kill
       orderState:'',//订单状态:团购状态: 待付款,待成团,待发货,待收货,
@@ -410,7 +439,114 @@
           }
           //创建时间
           data.createtime = util.getMyDate(parseInt(data.createtime))
+          //返回积分
+          data.score_g= data.score_g.split('.')[0]
+          //实付款
+          data.final_amount = util.toDecimal2(data.final_amount)
+          //运费
+          data.total_amount = util.toDecimal2(data.total_amount)
+          //商品合计
+          data.cost_freight = util.toDecimal2(data.cost_freight)
+          //团购状态
+
+          if (data.status=='finish' || data.status=='uncommented') {//已完成
+            data.typeText = '已完成'
+          }
+          if (data.status=='cancel' ||data.status=='dead') {//已取消
+            data.typeText = '已取消'
+          }
+          //当status为active时用来区分待发货,待收货，然后为pedding时判断待付款,待成团、已过期
+          //小分类  进行中:(待付款,待成团,待发货,待收货)
+          if (data.status=='pendding' || data.status=='active') {//进行中
+            //组团成功
+            if (data.status=='active') {//分为 待收货  待发货
+              if (data.ship_status=='0') {//待发货
+                data.typeText = '待发货'
+              }else if (data.ship_status=='1') {//待收货
+                data.typeText = '待收货'
+              }
+            }else {//组团不成功  (未支付,已过期,待成团)  pendding
+              var  create_time= parseInt(data.groups.create_time)
+              var  remain_time = parseInt(data.groups.remain_time)
+              var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+              var all = create_time+remain_time
+
+              if (create_time+remain_time> currentInterval) {//组团未过期
+                if (data.pay_status=='1') {//组团中
+                  data.typeText = '待成团'
+                }else {//未支付
+                  //固定制服时间为120分钟  超出后不能支付
+                  if (create_time+7200<currentInterval) {//超出支付时间
+                    data.typeText = '(未支付)已过期'
+                  }else {
+                    data.typeText = '待付款'
+                  }
+                }
+              }else {//组团已过期
+                data.typeText = '(团购结束)已过期'
+              }
+            }
+          }
+          //data.typeText='(未支付)已过期' //测试 变更团购状态
+          switch (data.typeText){
+            case '已完成'://
+              console.log('已完成')
+              self.bagImgId = 'bg_groupOrder'
+              self.bagTitle = '团购成功'//标题
+              self.bagText = '您的每一次肯定都将成为我们前进的动力'//描述
+              break;
+            case '已取消'://
+              console.log('已取消')
+              self.bagImgId = 'bg_failOrder'
+              self.bagTitle = '交易关闭'//标题
+              self.bagText = '很遗憾此团购订单已被取消'//描述
+              data.color = '#3f2021'
+              break;
+            case '待发货'://
+              console.log('待发货')
+              self.bagImgId = 'bg_groupOrder'
+              self.bagTitle = '拼团已经成功'//标题
+              self.bagText = '好东西不怕晚,请耐心等待我们的好食'//描述
+              break;
+            case '待收货'://
+              console.log('待收货')
+              self.bagImgId = 'bg_groupOrder'
+              self.bagTitle = '好食已经出发'//标题
+              self.bagText = '还剩19天23时自动确认收货'//描述
+              break;
+            case '待成团'://
+              console.log('待成团')
+              self.bagImgId = 'bg_groupOrder'
+              self.bagTitle = '拼团还未成功'//标题
+              self.bagText = '剩23小时59分自动取消团购订单,快邀请好友一起拼团'//描述
+              break;
+            case '(未支付)已过期'://
+              console.log('(未支付)已过期')
+              self.bagImgId = 'bg_failOrder'
+              self.bagTitle = '交易关闭'//标题
+              self.bagText = '很遗憾此团购订单已被取消'//描述
+              data.color = '#3f2021'
+              break;
+            case '待付款'://
+              console.log('待付款')
+              self.bagImgId = 'bg_groupOrder'
+              self.bagTitle = '等待买家付款'//标题
+              self.bagText = '剩23小时59分自动取消团购订单'//描述
+              break;
+            case '(团购结束)已过期'://
+              console.log('(团购结束)已过期')
+              self.bagImgId = 'bg_failOrder'
+              self.bagTitle = '交易关闭'//标题
+              self.bagText = '很遗憾此团购订单已被取消'//描述
+              data.color = '#3f2021'
+              break;
+
+            default:
+              break;
+          }
+
           self.orderDetail = data
+         // console.log(self.orderDetail.typeText)
           console.log(self.orderDetail)
           self.$apply()
         }
