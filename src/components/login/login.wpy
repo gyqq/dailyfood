@@ -326,7 +326,7 @@
         }
       },
       changeLoginType(type){//登录方式切换
-        console.log(type)
+        //console.log(type)
         this.seeType = true
         this.loginIfo.eyesImage = '../../image/icon/icon-CloseEyes.png'
         this.loginIfo.username = ''
@@ -366,6 +366,9 @@
       var url = self.globalData.base_url+'oauth2/token'
       // console.log(url)
       //console.log(data)
+      wepy.showLoading({
+        title: '登录中',
+      })
       wepy.request({
         url:url,
         method: "POST",
@@ -395,7 +398,7 @@
             self.$apply();
             //console.log(self.isShow)
           }
-
+          wepy.hideLoading()
         }
       })
     }
@@ -416,11 +419,13 @@
           console.log(res)
           //openid = res.data.openid //返回openid
           wepy.setStorageSync('openid', res.data.results[0].openid)
+          wepy.setStorageSync('memberId', res.data.results[0].memberId)
           console.log('返回openid='+res.data.results[0].openid)
         }
       })
     }
     onLoad() {
+      wepy.hideLoading()
       //console.log('登录调用')
       //console.log(this.isShow)
     }

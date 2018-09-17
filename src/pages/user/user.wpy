@@ -39,8 +39,8 @@
 
     events = {};
 
-    onLoad() {
-
+    onLoad(options) {
+      console.log(options)
     }
   }
 </script>

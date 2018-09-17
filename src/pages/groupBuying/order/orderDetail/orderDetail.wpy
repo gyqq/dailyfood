@@ -325,7 +325,7 @@
       </view>
       <view class="ifo">
         <text class="left">创建时间:</text>
-        <text class="left">{{orderDetail.createtime}}</text>
+        <text class="left">{{orderDetail.createtimeStr}}</text>
       </view>
       <view class="ifo" wx:if="{{orderDetail.typeText=='待成团' || orderDetail.typeText=='待发货' ||orderDetail.typeText=='待收货' ||orderDetail.typeText=='已完成'}}">
         <text class="left">付款时间:</text>
@@ -346,25 +346,25 @@
     </view>
     <view class="orderDetail-operation">
       <view wx:if="{{orderDetail.typeText=='待付款'}}">
-        <text class="operation-btn right" style="color:#b58151;border: 1rpx solid #b58151">去付款</text>
-        <text class="operation-btn right">取消团购</text>
+        <text class="operation-btn right" @tap="toPay" style="color:#b58151;border: 1rpx solid #b58151">去付款</text>
+        <text class="operation-btn right" @tap="cancelGroup">取消团购</text>
       </view>
       <view wx:if="{{orderDetail.typeText=='待成团'}}">
         <text class="operation-btn right" style="color:#b58151;border:1rpx solid #b58151">邀请好友</text>
-        <text class="operation-btn right">拼团详情</text>
+        <text class="operation-btn right" @tap="groupState">拼团详情</text>
       </view>
       <view wx:if="{{orderDetail.typeText=='待发货'}}">
-        <text class="operation-btn right">拼团详情</text>
+        <text class="operation-btn right" @tap="groupState">拼团详情</text>
       </view>
       <view wx:if="{{orderDetail.typeText=='待收货'}}">
         <text class="operation-btn right">查看物流</text>
-        <text class="operation-btn right">拼团详情</text>
+        <text class="operation-btn right" @tap="groupState">拼团详情</text>
       </view>
       <view wx:if="{{orderDetail.typeText=='已完成'}}">
-        <text class="operation-btn right">拼团详情</text>
+        <text class="operation-btn right" @tap="groupState">拼团详情</text>
       </view>
       <view wx:if="{{orderDetail.typeText=='已取消' ||orderDetail.typeText=='(团购结束)已过期' || orderDetail.typeText=='(未支付)已过期'}}">
-        <text class="operation-btn right">删除订单</text>
+        <text class="operation-btn right" @tap="deleteGroup">删除订单</text>
       </view>
     </view>
   </view>
@@ -407,7 +407,108 @@
 
           }
         })
-      }
+      },
+      cancelGroup(){//取消团购
+        wepy.showLoading({
+          title: '取消中',
+        })
+        var self =this
+        var publicStr = wepy.$instance.getPublicData()
+        let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/cancel'+publicStr
+        var data = {
+          order_id:this.order_id,
+          reason_type:7,
+          _method:'DELETE',
+          reason_desc:'不想要了'
+        }
+        wepy.request({
+          url:url,
+          method: "DELETE",
+          data:data,
+          header: {
+            "Content-Type": "application/json; charset=UTF-8",  //post
+          },
+          success: function(res) {
+            console.log(res)
+            var res = res.data
+            wepy.hideLoading()
+            if (res.status=='1') {
+              wepy.showToast({
+                title: '订单已取消',
+                icon: 'success',
+                duration: 2000
+              })
+              wepy.navigateBack({
+                delta: 1
+              })
+              // wepy.redirectTo({
+              //   url: '../../../user/myGroup/myGroup'
+              // })
+            }else {
+              wepy.showModal({
+                title: '取消提示',
+                content:res.status_txt,
+                success: function(res) {
+                }
+              })
+            }
+            self.$apply()
+          }
+        })
+      },
+      toPay(){//去支付
+        this.getPayData(this.orderDetail)
+      },
+      groupState(){//拼团详情
+        wepy.navigateTo({
+          url: '../../groupState/groupState?groupOn_id='+this.orderDetail.groupOn_id
+        })
+      },
+      deleteGroup(){//删除订单
+        wepy.showLoading({
+          title: '取消中',
+        })
+        var self =this
+        var publicStr = wepy.$instance.getPublicData()
+        let url = self.globalData.base_url+self.globalData.version_no+'/orders/display'+publicStr
+        var data = {
+          order_id:this.order_id,
+          _method:'PUT',
+          status:false
+        }
+        wepy.request({
+          url:url,
+          method: "PUT",
+          data:data,
+          header: {
+            "Content-Type": "application/json; charset=UTF-8",  //post
+          },
+          success: function(res) {
+            console.log(res)
+            var res = res.data
+            wepy.hideLoading()
+            if (res.status=='1') {
+              wepy.showToast({
+                title: '订单已删除',
+                icon: 'success',
+                duration: 2000
+              })
+              wepy.navigateBack({
+                delta: 1
+              })
+            }else {
+              wepy.showModal({
+                title: '取消提示',
+                content:res.status_txt,
+                success: function(res) {
+                }
+              })
+            }
+
+            self.$apply()
+          }
+        })
+      },
     };
 
     events = {};
@@ -418,6 +519,9 @@
       // dead //已作废
       // "active";//组团成功
       // "pendding";//进行中
+      wepy.showLoading({
+        title: '加载中',
+      })
       var self =this
       var publicStr = wepy.$instance.getPublicData()
       let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/order/'+this.order_id+publicStr
@@ -429,7 +533,7 @@
           "Content-Type": "application/json; charset=UTF-8",  //post
         },
         success: function(res) {
-          //console.log(res)
+          console.log(res)
           var data = res.data.results[0]
           //收货地址整理
           data.ship_area = data.ship_area.split('mainland:')[1].split(':')+data.ship_addr
@@ -438,7 +542,7 @@
             data.groups.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+data.groups.groupon_image
           }
           //创建时间
-          data.createtime = util.getMyDate(parseInt(data.createtime))
+          data.createtimeStr = util.getMyDate(parseInt(data.createtime))
           //返回积分
           data.score_g= data.score_g.split('.')[0]
           //实付款
@@ -466,7 +570,7 @@
                 data.typeText = '待收货'
               }
             }else {//组团不成功  (未支付,已过期,待成团)  pendding
-              var  create_time= parseInt(data.groups.create_time)
+              var  create_time= parseInt(data.createtime)////data.groups.create_time
               var  remain_time = parseInt(data.groups.remain_time)
               var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
               var all = create_time+remain_time
@@ -548,13 +652,59 @@
           self.orderDetail = data
          // console.log(self.orderDetail.typeText)
           console.log(self.orderDetail)
+          wepy.hideLoading()
           self.$apply()
         }
       })
     }
+    //支付开始========
+    getPayData(item){//获取支付信息
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      var openid = wepy.getStorageSync('openid')
+      let url = self.globalData.base_url+self.globalData.version_no+'/small/weixinpay?openid='+openid+'&order_id='+item.order_id
+      console.log(url)
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8"  //post
+        },
+        success: function(res) {
+          console.log('支付参数返回===========')
+          console.log(res.data.results[0])
+          wepy.hideLoading()
+          self.pay(res.data.results[0])
 
+        }
+      })
+    }
+    pay(payData){
+      var self =this
+      wepy.requestPayment(
+        {
+          'timeStamp': payData.timeStamp,
+          'nonceStr': payData.nonceStr,
+          'package':  payData.package,
+          'signType': 'MD5',
+          'paySign': payData.paySign,
+          'success': function (res) {
+            console.log(res)
+          },
+          'fail': function (res) {
+            console.log(res)
+            self.getOrderDetail()
+          },
+          'complete': function (res) {//上线注释
+            console.log('支付All')
+            console.log(res)
+
+          }
+        })
+    }
     onLoad(options) {
       this.order_id = options.order_id
+      console.log('order_id='+options)
       this.getOrderDetail()
     }
   }

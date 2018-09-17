@@ -10,6 +10,10 @@
   padding: 0;
   margin-top: -11rpx;
 }
+.right{
+  display: block;
+  float: right;
+}
 .img-list image:nth-child(1){
   margin-top: 0rpx;
 }
@@ -71,6 +75,55 @@
   background-color: #b58151;
   float: right;
 }
+  /*邀请*/
+  .detal-bottom-invite{
+    position: fixed;
+    bottom: 0;
+    height: 96rpx;
+    background: white;
+    width: 750rpx;
+  }
+.detal-bottom-invite .left{
+  float: left;
+  height: 96rpx;
+  line-height: 96rpx;
+}
+.detal-bottom-invite view{
+  height: 96rpx;
+  line-height: 96rpx;
+}
+.detal-bottom-invite view:nth-child(1) {
+  width: 200rpx;
+  border-right: 1rpx solid #dadada;
+}
+.detal-bottom-invite view:nth-child(1) text{
+  display: block;
+  height: 40rpx;
+  line-height: 40rpx;
+  margin-left: 45rpx;
+}
+  .detal-bottom-invite view:nth-child(1) text:nth-child(1){
+    margin-top: 10rpx;
+    font-size: 28rpx;
+    color:#3f2227;
+  }
+.detal-bottom-invite view:nth-child(1) text:nth-child(2){
+  font-size: 28rpx;
+  font-weight: bolder;
+  color:#3f2227;
+}
+.detal-bottom-invite view:nth-child(2){
+  width:300rpx;
+}
+.detal-bottom-invite view:nth-child(3){
+  width:220rpx;
+  text-align: center;
+  background-color: #3e1e1f;
+  color: white;
+  font-size: 28rpx;
+  letter-spacing: 2rpx;
+  /*font-weight: bolder;*/
+}
 </style>
 <template>
   <view class="img-list">
@@ -79,7 +132,7 @@
       <template is="wxParse" data="{{wxParseData:article.nodes}}"/>
     </block>
   </view>
-  <view class="detal-bottom">
+  <view class="detal-bottom" wx:if="{{options.groupType=='create'}}">
     <view class="left" @tap="backGroupListbtn">
       <image src="/image/group/icon-groupList.png"></image>
       <text>团购列表</text>
@@ -95,6 +148,20 @@
       去蹭团
     </view>
   </view>
+
+  <view class="detal-bottom-invite" wx:if="{{options.groupType=='join'}}">
+    <view class="left">
+      <text>剩余</text>
+      <text>15:42:13</text>
+    </view>
+    <view class="left">
+
+    </view>
+    <view class="right" @tap="inviteGroupBtn">
+      我要参团
+    </view>
+  </view>
+  <login :isShow.sync="loginshow"></login>
   <cengGroup :Group.sync="Group" catchtouchmove="ture"></cengGroup>
   <!--</view>-->
 </template>
@@ -104,18 +171,20 @@
   import { connect } from 'wepy-redux';
   import WxParse from '../../../wxParse/wxParse.js'
   import cengGroup from '@/components/group/cengGroup/cengGroup'
-
+  import login from '@/components/login/login'
   export default class groupDetails extends wepy.page {
     config = {
       navigationBarTitleText: '团购详情'
     };
     components = {
-      cengGroup:cengGroup
+      cengGroup:cengGroup,
+      login:login,//登录
     };
 
     //mixins = [testMixin];
 
     data = {
+      loginshow:false,
       globalData:wepy.$instance.globalData,
       options:null,
       article:'',
@@ -169,8 +238,18 @@
       },
       openGroupBtn(){//立即开团
         wepy.navigateTo({
-          url: '../../order/confirmOrder/confirmOrder?groupon_id='+this.groupDetail.groupon_id
+          url: '../../groupBuying/order/confirmOrder/confirmOrder?groupType=create&groupon_id='+this.groupDetail.groupon_id
         })
+      },
+      inviteGroupBtn(){//立即参团(邀请好友打开)
+        if (this.judgeLogin()) {//已注册
+          wepy.navigateTo({
+            url: '../../groupBuying/order/confirmOrder/confirmOrder?groupType=join&groupon_id='+this.groupDetail.groupon_id+'&gactivityId='+this.options.gactivityId
+          })
+        }else {//未注册
+          this.loginshow = true
+        }
+
       },
     };
 
@@ -184,11 +263,17 @@
         // this.GroupShow = param
         this.$apply()
       },
-      'goConfirmOrder':()=>{
-        wepy.navigateTo({
-          url: '../../order/confirmOrder/confirmOrder'
-        })
+      'closeLogin':(param,even) =>{//登录关闭监听
+        //console.log(param)
+        this.loginshow = param
+        this.$apply()
+        this.getGroupList()
       }
+      // 'goConfirmOrder':()=>{
+      //   wepy.navigateTo({
+      //     url: '../../groupBuying/order/confirmOrder/confirmOrder'
+      //   })
+      // }
 
     };
     judgeLogin(){//判断是否登陆
@@ -201,6 +286,9 @@
     }
     getGroupList(){//获取团购列表
       var self = this
+      wepy.showLoading({
+        title: '加载中',
+      })
       var publicStr = wepy.$instance.getPublicData()
       let url = self.globalData.base_url+self.globalData.version_no+'/group-buy'+publicStr
       wepy.request({
@@ -230,19 +318,24 @@
           WxParse.wxParse('article', 'html', img, self,1);
           //imglist
           //wepy.removeStorageSync('imglist')//详情页存储的介绍信息
+          wepy.hideLoading()
           self.$apply()
         }
       })
 
     }
     onLoad(options) {
-      // console.log(options)
+      console.log(options)
       this.options = options
       this.getGroupList()
 
     }
     onShow(){
       wepy.$instance.clearStorageData()
+      if (!this.judgeLogin()) {//未注册
+        this.loginshow = true
+        this.$apply()
+      }
     }
   }
 </script>

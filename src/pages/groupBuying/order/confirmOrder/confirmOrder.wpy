@@ -262,7 +262,7 @@
       <text class="right invoice-type">{{Invoice.is_tax==2?'开发票':'不开发票'}}</text>
     </view>
     <view class="confirmOrder-ifo">
-      <input class="confirmOrder-note" value="{{memo}}" bindinput="memoChange" placeholder="订单备注" auto-focus/>
+      <input class="confirmOrder-note" value="{{memo}}" bindinput="memoChange" placeholder="订单备注"/>
       <view class="confirmOrder-item">
         <text class="left">商品合计</text>
         <text class="right">￥{{groupIfo.groupon_price}}</text>
@@ -297,8 +297,11 @@
     //mixins = [testMixin];
 
     data = {
+      options:{},
       globalData:wepy.$instance.globalData,
       groupon_id:'',//团购id
+      player_order_id:'',//订单id
+      grouponIfo:{},//生成订单后返回数据
       addr_id:"",//收货地址id "47597"
       addresses:{},//收货地址信息
       groupIfo:{},//团购信息
@@ -310,27 +313,35 @@
 
     methods = {
       submitOrder(){//提交订单
-        // this.openGroupOrder()//开团
+        wepy.showLoading({
+          title: '订单生成中',
+        })
+        console.log('=========')
+        console.log(this.options.groupType)
+        console.log('=========')
+        this.openGroupOrder()//开团
+
+
         // wepy.removeStorageSync('invoice')//清除发票信息
         // wepy.removeStorageSync('addr_id')//清除所选地址id
-        wepy.$instance.clearStorageData()
-        wepy.navigateTo({
-          url: '../../groupBuying/groupState/groupState'
-        })
+        // wepy.$instance.clearStorageData()
+        // wepy.navigateTo({
+        //   url: '../../groupBuying/groupState/groupState'
+        // })
       },
       memoChange: function (e) {//备注
         this.memo = e.detail.value
-        console.log(this.memo)
+        //console.log(this.memo)
       },
       selectAddress(){//跳转到地址页
         //'pages/user/address/address',
         wepy.navigateTo({
-          url: '../../user/address/address?type=select'
+          url: '../../../user/address/address?type=select'
         })
       },
       jumpInvoice(){//跳转到发票页
         wepy.navigateTo({
-          url: '../../invoice/invoice'
+          url: '../../../invoice/invoice'
         })
       }
     };
@@ -340,9 +351,9 @@
       var self =this
       var publicStr = wepy.$instance.getPublicData()
       //addr_id
-      this.addr_id = wx.getStorageSync('addr_id') ||''
+      this.addr_id = wepy.getStorageSync('addr_id') ||''
       let url = self.globalData.base_url+self.globalData.version_no+'/member/addresses'+publicStr+'&addr_id='+this.addr_id
-      //console.log(self.addr_id)
+      console.log(self.addr_id)
       wepy.request({
         url:url,
         method: "get",
@@ -385,7 +396,7 @@
       var self =this
       var publicStr = wepy.$instance.getPublicData()
       let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/'+this.groupon_id+publicStr
-      //console.log(url)
+      console.log('商品信息接口'+url)
       wepy.request({
         url:url,
         method: "get",
@@ -393,7 +404,7 @@
           "Content-Type": "application/json; charset=UTF-8"  //post
         },
         success: function(res) {
-          //console.log(res)
+          console.log(res)
           var res = res.data.results[0]
           //console.log(res.groupon_image)
 
@@ -402,7 +413,12 @@
           console.log('团购信息===')
           console.log(self.groupIfo)
           console.log('团购信息===')
+          wepy.hideLoading()
           self.$apply()
+        },
+        fail:function(res) {
+          console.log('商品接口错误')
+          console.log(res)
         }
       })
     }
@@ -428,9 +444,28 @@
         _method:'POST',
         groupId:parseInt(this.groupon_id),
         addressId:parseInt(this.addr_id),
-        buyType:'create',
+        buyType:this.options.groupType,
         payment:'wx_lite',
-        memo:'',//备注
+        memo:this.memo,//备注
+        is_tax:false//不开发票
+      }
+      if (this.options.groupType=='join') {//蹭团需要加上此参数
+        data.gactivityId = this.options.gactivityId
+      }
+      console.log(data)
+      var invoice = wepy.getStorageSync('invoice')
+      if (invoice) {
+        var is_tax = false
+        if (invoice.is_tax==1) {//1 不开 2公司发票
+          is_tax = false
+        }else {
+          is_tax = true
+        }
+        data.is_tax = is_tax
+
+        data.tax_company = invoice.tax_company
+        data.tax_no = invoice.tax_no
+        data.tax_email = invoice.tax_email
       }
       wepy.request({
         url:url,
@@ -440,18 +475,22 @@
           "Content-Type": "application/json; charset=UTF-8"  //post
         },
         success: function(res) {
+          //订单生成
+          console.log('订单生成===========')
           console.log(res)
           var res = res.data
           if (res.status == '1') {//开团成功
+            self.grouponIfo = res.results[0]
             self.getPayData(res.results[0])
           } else {
-            wx.showModal({
-              title: '订单确认出错',
+            wepy.showModal({
+              title: '订单确认提示',
               content: res.status_txt,
               success: function(res) {
 
               }
             })
+            wepy.hideLoading()
           }
           self.$apply()
         }
@@ -460,31 +499,59 @@
     getPayData(backOrder){//获取支付信息
       var self =this
       var publicStr = wepy.$instance.getPublicData()
-      let url = self.globalData.base_url+self.globalData.version_no+'/trade/charge'+publicStr
+      var openid = wepy.getStorageSync('openid')
+      let url = self.globalData.base_url+self.globalData.version_no+'/small/weixinpay?openid='+openid+'&order_id='+backOrder.player_order_id
       console.log(url)
-      console.log(backOrder)
-      var data = {
-        _method:'POST',
-        orderId:backOrder.player_order_id,
-        paymentMethod:'wx_lite',
-        successJumpUrl:'',
-        openid:'',
-      }
       wepy.request({
         url:url,
-        method: "post",
-        data:data,
+        method: "get",
         header: {
           "Content-Type": "application/json; charset=UTF-8"  //post
         },
         success: function(res) {
-          console.log(res)
+          console.log('支付参数返回===========')
+          console.log(res.data.results[0])
+          wepy.hideLoading()
+          self.pay(res.data.results[0])
 
         }
       })
     }
+    pay(payData){
+      var self =this
+      wepy.requestPayment(
+        {
+          'timeStamp': payData.timeStamp,
+          'nonceStr': payData.nonceStr,
+          'package':  payData.package,
+          'signType': 'MD5',
+          'paySign': payData.paySign,
+          'success': function (res) {
+             console.log(res)
+             console.log('支付正确'+self.player_order_id)
+            wepy.redirectTo({
+              url: '../../groupState/groupState?groupOn_id='+self.grouponIfo.groupon_id
+            })
+
+          },
+          'fail': function (res) {
+            console.log(res)
+            console.log('支付错误'+self.grouponIfo.player_order_id)
+
+            wepy.redirectTo({
+              url: '../orderDetail/orderDetail?order_id='+self.grouponIfo.player_order_id
+            })
+
+          },
+          'complete': function (res) {//上线注释
+            console.log('支付All')
+            console.log(res)
+
+          }
+        })
+    }
     setInvoice(){//设置发票信息
-      var invoice = wx.getStorageSync('invoice') ||{}
+      var invoice = wepy.getStorageSync('invoice') ||{}
       this.Invoice = invoice
       this.$apply()
       console.log('发票信息===')
@@ -493,6 +560,11 @@
     }
     onLoad(options) {
       //console.log('onload')
+      wepy.showLoading({
+        title: '加载中',
+      })
+      console.log(options)
+      this.options = options
       this.groupon_id = options.groupon_id
       this.getGroupProduct()//团购信息
       //console.log(options)
@@ -502,6 +574,8 @@
       //console.log('onshow')
       this.getAddress()//收货地址
       this.setInvoice()//设置发票信息
+
+
     }
 
 

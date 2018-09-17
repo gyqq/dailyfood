@@ -140,7 +140,7 @@
     <view class="cengGroup-modal">
       <view class="modal-top">
         <text>选择要蹭的团</text>
-        <image @tap="closeBtn" src="../../../../image/icon/icon-close.png"></image>
+        <image @tap="closeBtn" src="../../../image/icon/icon-close.png"></image>
       </view>
       <view class="modal-body" >
         <!--<text class="statues" wx:if="{{results.length==0}}">{{status_txt}}</text>-->
@@ -199,7 +199,7 @@
         console.log('跳转')
         this.$emit('closeCengGroup',false)
         wepy.navigateTo({
-          url: '../../order/confirmOrder/confirmOrder?groupon_id='+this.groupDetail.groupon_id
+          url: '../groupBuying/order/confirmOrder/confirmOrder?groupType=create&groupon_id='+this.groupDetail.groupon_id
         })
         // this.$emit('goConfirmOrder')
       },
@@ -213,6 +213,10 @@
         // }
         //event.currentTarget.dataset
         console.log(item)
+        this.$emit('closeCengGroup',false)
+        wepy.navigateTo({
+          url: '../groupBuying/order/confirmOrder/confirmOrder?groupType=join&groupon_id='+item.groupon_id+'&gactivityId='+item.gactivity_id
+        })
       },
       getcengGroupList(groupId,remain_time,groupDetail){
         var self = this
@@ -244,8 +248,8 @@
                       if (time>timestamp) {//未过期
                         self.results.push(one)
                       }
-                      console.log(timestamp)
-                      console.log(time)
+                      // console.log(timestamp)
+                      // console.log(time)
                     }
                   })
                 }

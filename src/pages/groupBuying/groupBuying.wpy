@@ -107,13 +107,56 @@
   margin-left: 60rpx;
 
 }
+  /*邀请view*/
+  .groupBuying .group-list .group-item .item-invite .invite-preson{
+    float: left;
+    width: 420rpx;
+    height: 110rpx;
+    line-height: 110rpx;
+  }
+  .groupBuying .group-list .group-item .item-invite view .btn{
+    float: right;
+    height: 80rpx;
+    line-height: 80rpx;
+    width: 190rpx;
+    font-size: 25rpx;
+    color: white;
+    text-align: center;
+    border: 1px solid #999999;
+    margin-right: 30rpx;
+    margin-top: 5rpx;
+    background-color: #3e1e1f;
+  }
+  .groupBuying .group-list .group-item .item-invite .icon-view{
+    /*width: 170rpx;*/
+    height: 110rpx;
+    float: left;
+    line-height: 110rpx;
+    /*padding-top: 55rpx;*/
+  }
+  .groupBuying .group-list .group-item .item-invite .icon-view:nth-child(1){
+    margin-left: 30rpx;
+  }
+  .groupBuying .group-list .group-item .item-invite .icon-add{
+    width:20rpx;
+    height: 20rpx;
+    padding:10rpx 10rpx;
+    display: inline-block;
+  }
+  .groupBuying .group-list .group-item .item-invite .pro-img{
+    width: 55rpx;
+    height: 55rpx;
+    border-radius: 50%;
+    background-color: #eeeeee;
+    display: inline-block;
+  }
 
 /*团购单个*/
 </style>
 <template>
   <view class="groupBuying">
     <view class="group-list">
-      <view class="group-item" wx:for="{{groupList}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+      <view class="group-item" wx:for="{{groupList}}"  wx:for-item="item" wx:key="id">
         <view class="item-one" @tap="groupDetails({{item}})">
           <view class="item-discount">{{item.discount}}折</view>
           <image class="item-img" src="{{item.groupon_image}}"></image>
@@ -125,10 +168,20 @@
             <text class="item-LPrice">{{item.person}}人成团价<text>￥{{item.groupon_price}}</text></text>
             <text class="item-RPrice">独享价￥{{item.origin_price}}</text>
           </view>
-          <view style="text-align:{{item.groupAct?'':'center'}}">
-            <!--wx:if="{{item.groupAct}}"-->
-            <button class="Btn btn0ne" wx:if="{{item.groupAct}}" @tap="cengGroupBtn({{item}})">去蹭团</button>
-            <button class="Btn btnTwo" @tap="openGroupBtn({{item}})" style="width:{{item.groupAct?'285rpx':'500rpx'}};margin-left:{{item.groupAct?'60rpx':'0'}}">立即开团</button>
+          <view class="item-invite">
+            <view wx:if="{{!item.invite}}">
+              <button class="Btn btn0ne"  @tap="cengGroupBtn({{item}})">去蹭团</button>
+              <button class="Btn btnTwo" @tap="openGroupBtn({{item}})">立即开团</button>
+            </view>
+            <view wx:if="{{item.invite}}">
+              <view class="invite-preson">
+                <view class="icon-view" wx:for="{{item.groupAct.buyers}}" wx:for-index="index" wx:for-item="two" wx:key="id" >
+                  <image src="{{two.member_img}}" class="pro-img"></image>
+                  <image class="icon-add" wx:if="{{index!=item.groupAct.buyers.length-1}}" src="../../image/icon/icon-add.png"></image>
+                </view>
+              </view>
+              <button class="btn" open-type="share" data-item="{{item}}" >邀请好友</button>
+            </view>
           </view>
         </view>
       </view>
@@ -194,7 +247,7 @@
 
         if (this.judgeLogin()) {//已注册
           wepy.navigateTo({
-            url: './groupDetails/groupDetails?groupon_id='+item.groupon_id
+            url: './groupDetails/groupDetails?groupType=create&groupon_id='+item.groupon_id
           })
         }else {//未注册
           this.loginshow = true
@@ -203,7 +256,7 @@
       groupDetails(item){//团购详情
         console.log(item)
         wepy.navigateTo({
-          url: './groupDetails/groupDetails?groupon_id='+item.groupon_id
+          url: './groupDetails/groupDetails?groupType=create&groupon_id='+item.groupon_id
         })
 
       },
@@ -224,9 +277,13 @@
         //console.log(param)
         this.loginshow = param
         this.$apply()
+        this.getGroupList()
       }
     };
     getGroupList(){//获取团购列表
+      wepy.showLoading({
+        title: '加载中',
+      })
       console.log('团购列表')
       var self = this
       var publicStr = wepy.$instance.getPublicData()
@@ -238,12 +295,45 @@
           "Content-Type": "application/json; charset=UTF-8",  //post
         },
         success: function(res) {
+          var memberId = wx.getStorageSync('memberId')
           res.data.results.map((item) =>{
             item.discount =parseInt(item.discount)
             item.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+item.groupon_image
+            //invite
+            if (item.groupAct && item.groupAct.buyers) {
+              item.groupAct.buyers.map((two) =>{
+                two.member_img = self.globalData.base_url+self.globalData.version_no+'/img/'+two.member_img
+                if (two.member_id==memberId && two.is_join=='success') {//is_join付款状态
+                  var  create_time= parseInt(item.groupAct.create_time)
+                  var  remain_time = parseInt(item.remain_time)
+                  var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+                  // if (item.groupon_id=="180810094120028") {
+                  //   console.log(create_time+remain_time-currentInterval)
+                  // }
+                  if (create_time+remain_time>currentInterval) {//时间判断
+                    var cunt = parseInt(item.person) - parseInt(item.groupAct.join_num)
+                    if (cunt>0){//实际人数少于  总人数
+                      for (var i=0;i<cunt;i++) {
+                        var per = {
+                          member_img:''
+                        }
+                        item.groupAct.buyers.push(per)
+                      }
+                    }
+
+                    item.invite =true//显示邀请
+                  }
+
+                  // return false
+                }
+              })
+              //console.log('===========')
+            }
+
           })
           self.groupList = res.data.results
           console.log(res)
+          wepy.hideLoading()
           self.$apply()
         }
       })
@@ -256,14 +346,33 @@
         return false
       }
     }
-    onLoad() {
+    onLoad(options) {
+      console.log('options')
+      console.log(options)
+      console.log('options')
       var loginInfo = wepy.getStorageSync('loginInfo')
       // if (!loginInfo) {
       //   console.log('登录')
       //   this.loginshow = true
       //   this.$apply()
       // }
+
+
+    }
+    onShow(){
       this.getGroupList()
+    }
+    onShareAppMessage(res){
+      console.log(res)
+      console.log('groupon_id='+res.target.dataset.item.groupon_id)
+      console.log(res.target.dataset.item.groupon_image)
+      console.log('gactivityId='+res.target.dataset.item.groupAct.gactivity_id)
+      return {
+        title: '邀请团购',
+        path: 'pages/groupBuying/groupDetails/groupDetails?groupType=join&groupon_id='+res.target.dataset.item.groupon_id+'&gactivityId='+res.target.dataset.item.groupAct.gactivity_id,
+        imageUrl:res.target.dataset.item.groupon_image
+      }
+      //http://ec-yii.shinho.net.cn/
     }
   }
 </script>

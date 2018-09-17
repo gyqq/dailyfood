@@ -35,15 +35,15 @@ export default class extends wepy.app {
       'pages/groupBuying/groupBuying',
       'pages/groupBuying/groupDetails/groupDetails',
       'pages/groupBuying/groupState/groupState',
+      'pages/groupBuying/order/confirmOrder/confirmOrder',
+      'pages/groupBuying/order/orderDetail/orderDetail',
       'pages/webView/webView',
       'pages/secondkill/secondkill',
       'pages/invoice/invoice',
       'pages/user/user',
       'pages/user/myGroup/myGroup',
       'pages/user/address/address',
-      'pages/user/address/address_EA',
-      'pages/order/confirmOrder/confirmOrder',
-      'pages/order/orderDetail/orderDetail'
+      'pages/user/address/address_EA'
     ],
     window: {
       backgroundTextStyle: 'light',

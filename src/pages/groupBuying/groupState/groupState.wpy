@@ -79,13 +79,20 @@
     text-align: center;
     width: 90%;
   }
-  .groupState .groupState-three .three-text .three-title{
-    margin-bottom: 0rpx;
-    height: 60rpx;
-    line-height: 60rpx;
+  .groupState .groupState-three .three-text view{
+    margin-top: 20rpx;
   }
-  .groupState .groupState-three .three-text .three-title .three-time{
+  .groupState .groupState-three .three-text view text{
+    margin: 0 auto;
+    width: 97%;
+    height: 80rpx;
+    margin-top: 20rpx;
+    line-height: 60rpx;
+    display: inline;
+  }
+  .groupState .groupState-three .three-text view text .three-time{
     color: #b58150;
+
   }
   /*头像*/
   .groupState .groupState-three .three-people{
@@ -162,35 +169,32 @@
     <view class="groupState-one">{{groupTitle}}</view>
     <view class="confirmOrder-productIfo">
       <view class="pro-item">
-        <image src="https://ec-api.shinho.net.cn/v1/img/" class="pro-img left"></image>
+        <image src="{{orderDetail.groupon_image}}" class="pro-img left"></image>
         <view class="pro-ifo left">
-          <text class="pro-title">刘叔加的油桃</text>
+          <text class="pro-title">{{orderDetail.groupon_name}}</text>
           <view class="pro-price">
-            <text class="pro-num">2人拼团价</text>
-            <text class="pro-groupPrice">￥36</text>
-            <text class="pro-originalPrice">￥42</text>
+            <text class="pro-num">{{orderDetail.person}}人拼团价</text>
+            <text class="pro-groupPrice">￥{{orderDetail.groupon_price}}</text>
+            <text class="pro-originalPrice">￥{{orderDetail.origin_price}}</text>
           </view>
         </view>
       </view>
     </view>
     <view class="groupState-three">
       <view class="three-text">
-        <text class="three-title" wx:if="{{groupState=='蹭团成功' ||groupState=='开团成功'}}">
-          拼团还未成功,邀请好友一起来日常食食团购没事哦!
-          还差1人, <text class="three-time">07:36:24</text>后结束
-        </text>
-        <text class="three-title" style="margin-top: 40rpx;display: block;" wx:if="{{groupState=='团购成功' ||groupState=='团购失败'}}">拼团已满3人,团购成功!</text>
+        <view>
+          <text wx:if="{{orderDetail.textType=='开团成功' || orderDetail.textType=='蹭团成功'}}">拼团还未成功，邀请好友一起来日尝食食团购美食哦!还差{{groupIng.cunt}}人,<text class="three-time"> {{countdown}}</text>后结束!</text>
+        </view>
+        <text wx:if="{{orderDetail.textType!='开团成功' && orderDetail.textType!='蹭团成功'}}">{{textIfn}}</text>
       </view>
       <view class="three-people">
-        <image src="https://ec-api.shinho.net.cn/v1/img/" class=" pro-img "></image>
-        <image src="https://ec-api.shinho.net.cn/v1/img/" class=" pro-img "></image>
-        <image src="https://ec-api.shinho.net.cn/v1/img/" class=" pro-img "></image>
+        <image wx:for="{{groupPerson}}" wx:for-index="index" wx:for-item="item" wx:key="id" src="{{item.member_img}}" class=" pro-img "></image>
       </view>
       <view class="three-operation">
-        <button wx:if="{{groupState=='蹭团成功' ||groupState=='开团成功'}}" class="invitationBtn">立即邀请好友</button>
-        <button wx:if="{{groupState=='团购成功'}}" style="background: white;border:1rpx solid #3e2020;color:#3e2020" class="invitationBtn">团购其它商品</button>
-        <button wx:if="{{groupState=='团购失败'}}"  class="failure">去蹭团</button>
-        <button wx:if="{{groupState=='团购失败'}}"  class="failure">立即开团</button>
+        <button wx:if="{{orderDetail.inviteBtn}}" class="invitationBtn">立即邀请好友</button>
+        <button wx:if="{{orderDetail.otherBtn}}" @tap="buyOtherGoods" style="background: white;border:1rpx solid #3e2020;color:#3e2020" class="invitationBtn">团购其它商品</button>
+        <button wx:if="{{orderDetail.rubBtn}}"  class="failure">去蹭团</button>
+        <button wx:if="{{orderDetail.startBtn}}"  class="failure">立即开团</button>
       </view>
     </view>
     <view class="groupState-four">
@@ -204,10 +208,11 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
+  import util from '@/mixins/util'
 
   export default class groupState extends wepy.page {
     config = {
-      navigationBarTitleText: '蹭团成功'
+      navigationBarTitleText: ''
     };
     components = {};
 
@@ -215,10 +220,16 @@
 
     data = {
       globalData:wepy.$instance.globalData,
-      order_id:'',//订单号
+      currentTime:0,//时间戳刷新
+      countdown:'',//时分秒
+      groupOn_id:'',//订单号
       groupTitle:'',//标题
-      groupState:'',
+      textIfn:'',//图片上面标题
+      groupIng:{//开团成功   蹭团成功
+        cunt:null,//相差人数
+      },
       orderDetail:{},
+      groupPerson:[],//头像
     };
 
     computed = {};
@@ -229,19 +240,21 @@
           url: './../../webView/webView?url=' + 'https://shinhocloud.kf5.com/kchat/?lang=zh_CN&active_in_iframe=1#/chatbox'
         })
       },
+      buyOtherGoods(){//团购其它商品
+        wx.reLaunch({
+          url: '../groupBuying'
+        })
+      }
     };
 
     events = {};
-    getOrderDetail(){
-      //delivering //待收货
-      // finish//已完成
-      // cancel//已取消
-      // dead //已作废
-      // "active";//组团成功
-      // "pendding";//进行中
+    getGroupState(){
+      wepy.showLoading({
+        title: '加载中',
+      })
       var self =this
       var publicStr = wepy.$instance.getPublicData()
-      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/order/'+this.order_id+publicStr
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/'+this.groupOn_id+publicStr
       console.log(url)
       wepy.request({
         url:url,
@@ -250,106 +263,115 @@
           "Content-Type": "application/json; charset=UTF-8",  //post
         },
         success: function(res) {
-          //console.log(res)
+          if (!res.data.results[0]) {
+            return false
+          }
           var data = res.data.results[0]
           //图片
-          if (data.groups) {
-            data.groups.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+data.groups.groupon_image
-          }
+          data.groupAct.buyers.map((item) =>{
+            item.member_img = self.globalData.base_url+self.globalData.version_no+'/img/'+item.member_img
+          })
+          data.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+data.groupon_image
+          var member_id = wx.getStorageSync('memberId')
+          var  create_time= parseInt(data.groupAct.create_time)
+          var  remain_time = parseInt(data.remain_time)
+          var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+         //头部逻辑
+          if (data.groupAct.status=='3'){//团购成功
+            data.textType = '团购成功'
+            self.groupTitle = '恭喜您,团购成功!'
 
-          if (data.status=='finish' || data.status=='uncommented') {//已完成
-            data.typeText = '已完成'
-          }
-          if (data.status=='cancel' ||data.status=='dead') {//已取消
-            data.typeText = '已取消'
-          }
-          //当status为active时用来区分待发货,待收货，然后为pedding时判断待付款,待成团、已过期
-          //小分类  进行中:(待付款,待成团,待发货,待收货)
-          if (data.status=='pendding' || data.status=='active') {//进行中
-            //组团成功
-            if (data.status=='active') {//分为 待收货  待发货
-              if (data.ship_status=='0') {//待发货
-                data.typeText = '待发货'
-              }else if (data.ship_status=='1') {//待收货
-                data.typeText = '待收货'
-              }
-            }else {//组团不成功  (未支付,已过期,待成团)  pendding
-              var  create_time= parseInt(data.groups.create_time)
-              var  remain_time = parseInt(data.groups.remain_time)
-              var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
-              var all = create_time+remain_time
+          }else {// 开团成功,蹭团成功,团购失败
 
-              if (create_time+remain_time> currentInterval) {//组团未过期
-                if (data.pay_status=='1') {//组团中
-                  data.typeText = '待成团'
-                }else {//未支付
-                  //固定制服时间为120分钟  超出后不能支付
-                  if (create_time+7200<currentInterval) {//超出支付时间
-                    data.typeText = '(未支付)已过期'
-                  }else {
-                    data.typeText = '待付款'
-                  }
-                }
-              }else {//组团已过期
-                data.typeText = '(团购结束)已过期'
+            if (create_time+remain_time>currentInterval) {
+              if (data.groupAct.owner_id==member_id) {
+                data.textType = '开团成功'
+                self.groupTitle = '恭喜您, 开团成功!'
+
+              }else {
+                data.textType = '蹭团成功'
+                self.groupTitle = '恭喜您, 蹭团成功!'
               }
+            }else {
+              data.textType = '团购失败'
+              self.groupTitle = '很遗憾, 团购失败!'
             }
           }
-          data.typeText='已完成' //测试 变更团购状态
-          switch (data.typeText){
-            case '已完成'://
-              console.log('已完成')
-              wepy.setNavigationBarTitle({
-                title: '蹭团成功'
-              })
-              self.groupTitle = '恭喜您,蹭团成功!'
-              break;
-            case '已取消'://
-              console.log('已取消')
+          wepy.setNavigationBarTitle({
+            title: data.textType
+          })
 
-              data.color = '#3f2021'
-              break;
-            case '待发货'://
-              console.log('待发货')
-
-              break;
-            case '待收货'://
-              console.log('待收货')
-
-              break;
-            case '待成团'://
-              console.log('待成团')
-
-              break;
-            case '(未支付)已过期'://
-              console.log('(未支付)已过期')
-
-              break;
-            case '待付款'://
-              console.log('待付款')
-
-              break;
-            case '(团购结束)已过期'://
-              console.log('(团购结束)已过期')
-
-              break;
-
-            default:
-              break;
+          //头像显示
+          self.groupPerson= data.groupAct.buyers
+            //缺少人数
+          self.groupIng.cunt = parseInt(data.person) - parseInt(data.groupAct.join_num)
+          if (self.groupPerson.length < parseInt(data.person)){//实际人数少于  总人数
+            for (var i=0;i<self.groupIng.cunt;i++) {
+              var per = {
+                member_img:''
+              }
+              self.groupPerson.push(per)
+            }
           }
+          //中间部文字  和按钮逻辑
+          if (data.groupAct.status=='3') {
+            data.otherBtn = true;//团购其它
+            data.inviteBtn = false;//邀请好友
+            data.rubBtn = false;//蹭团
+            data.startBtn = false;//立即开团
+            self.textIfn = '拼团已满'+data.person+'人,团购成功!'
+          }else {
+            if (create_time+remain_time>currentInterval) {
+              var person = parseInt(data.person)
+              var join_num = parseInt(data.groupAct.join_num)
+              var pay_num = parseInt(data.groupAct.pay_num)
+              if (person==join_num && pay_num < person) {
+                data.otherBtn = true;//团购其它
+                data.inviteBtn = false;//邀请好友
+              }else {
+                data.otherBtn = false;//团购其它
+                data.inviteBtn = true;//邀请好友
+              }
+              data.rubBtn = false;//蹭团
+              data.startBtn = false;//立即开团
 
+              self.currentTime = create_time+remain_time-currentInterval
+              var currentTime = self.currentTime
+              console.log(self.cuntTime)
+              var intervalTime = setInterval(function () {
+                //console.log(currentTime)
+                currentTime--;
+                if (currentTime <= 0) {
+                  self.currentTime =0
+                  clearInterval(intervalTime)
+                  self.textIfn = '拼团还未成功，邀请好友一起来日尝食食团购美食哦!还差'+cunt+'人,00:00:00后结束!'
+                }
+                self.countdown = util.formatDuring(currentTime*1000)
+                //console.log(self.countdown)
+
+                //self.textIfn = '拼团还未成功，邀请好友一起来日尝食食团购美食哦!还差'+cunt+'人,'+time+'后结束!'
+                self.$apply();
+              }, 1000)
+
+            }else {
+              self.textIfn = '拼团未满'+data.person+'人,团购失败!'
+            }
+
+          }
           self.orderDetail = data
-          // console.log(self.orderDetail.typeText)
-          console.log(self.orderDetail)
+          wepy.hideLoading()
           self.$apply()
+          console.log(data)
         }
       })
     }
+
     onLoad(options) {
-      //蹭团成功  开团成功   团购成功   团购失败
-      this.groupState = '团购失败'
-      this.order_id = options.order_id
-      this.getOrderDetail()
+      console.log(options)
+      //蹭团成功  开团成功   团购成功   团购失败 "180910092967735"
+      this.groupOn_id = options.groupOn_id
+      //this.groupOn_id = '180910092967735'
+      this.getGroupState()
 
     }
   }
