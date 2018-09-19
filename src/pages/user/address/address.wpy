@@ -24,9 +24,9 @@
   /*地址类型*/
   .addressList .addressList-item .item-tip{
     width: 107rpx;
-    height: 180rpx;
-    line-height: 180rpx;
-    font-size: 20rpx;
+    height: 120rpx;
+    line-height: 120rpx;
+    font-size: 26rpx;
     color: #b68052;
     text-align: center;
   }
@@ -35,10 +35,10 @@
     width: 530rpx;
     font-size: 26rpx;
     color: #3d2120;
-    height: 180rpx;
+    height: 120rpx;
   }
   .addressList .addressList-item .item-ifo .item-basicIfo{
-    margin-top: 43rpx;
+    margin-top: 25rpx;
   }
 
   .addressList .addressList-item .item-ifo .item-basicIfo text:nth-child(2){
@@ -47,9 +47,9 @@
   /*编辑*/
   .addressList .addressList-item .item-editor{
     width: 107rpx;
-    height: 180rpx;
-    line-height: 180rpx;
-    font-size: 20rpx;
+    height: 130rpx;
+    line-height: 120rpx;
+    font-size: 26rpx;
     color: #b68052;
     text-align: center;
   }
@@ -143,6 +143,9 @@
       },
     };
     getAddresList(){//获取全部收货地址
+      wepy.showLoading({
+        title: '加载中',
+      })
       var self =this
       var publicStr = wepy.$instance.getPublicData()
       let url = self.globalData.base_url+self.globalData.version_no+'/member/addresses'+publicStr+'&addr_id='
@@ -160,9 +163,17 @@
             if (item.def_addr=='1') {
               item.tip = '默认'
             }
+            if (item.location_type=='company') {//公司
+              item.tip = '公司'
+            }
+            if (item.location_type=='home') {//家
+              item.tip = '家'
+            }
+
           })
           self.addressList = res.data.results
           self.$apply()
+          wepy.hideLoading()
         }
       })
     }

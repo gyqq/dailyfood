@@ -191,7 +191,7 @@
         <image wx:for="{{groupPerson}}" wx:for-index="index" wx:for-item="item" wx:key="id" src="{{item.member_img}}" class=" pro-img "></image>
       </view>
       <view class="three-operation">
-        <button wx:if="{{orderDetail.inviteBtn}}" class="invitationBtn">立即邀请好友</button>
+        <button wx:if="{{orderDetail.inviteBtn}}"  open-type="share" class="invitationBtn">立即邀请好友</button>
         <button wx:if="{{orderDetail.otherBtn}}" @tap="buyOtherGoods" style="background: white;border:1rpx solid #3e2020;color:#3e2020" class="invitationBtn">团购其它商品</button>
         <button wx:if="{{orderDetail.rubBtn}}"  class="failure">去蹭团</button>
         <button wx:if="{{orderDetail.startBtn}}"  class="failure">立即开团</button>
@@ -372,7 +372,18 @@
       this.groupOn_id = options.groupOn_id
       //this.groupOn_id = '180910092967735'
       this.getGroupState()
-
+    }
+    onShareAppMessage(res){
+      var res = this.orderDetail
+      console.log(res)
+      console.log('groupOn_id='+res.groupon_id)
+      console.log('groupon_image='+res.groupon_image)
+      console.log('gactivityId='+res.groupAct.gactivity_id)
+      return {
+        title: '邀请团购',
+        path: 'pages/groupBuying/groupDetails/groupDetails?groupType=join&groupon_id='+res.groupon_id+'&gactivityId='+res.groupAct.gactivity_id,
+        imageUrl:res.groupon_image
+      }
     }
   }
 </script>

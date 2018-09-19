@@ -24,12 +24,11 @@
   }
   /*地址*/
   .confirmOrder .confirmOrder-address{
-    height: 178rpx;
-    /*line-height: 178rpx;*/
+    /*height: 178rpx;*/
     width: 100%;
     margin-bottom: 10rpx;
     background-color: white;
-    /*icon-rightArrow*/
+    padding-bottom:15rpx ;
   }
   .confirmOrder .confirmOrder-address .address-left{
     width: 640rpx;
@@ -68,6 +67,7 @@
     font-size: 25rpx;
     width: 490rpx;
     margin-left:24rpx ;
+    /*margin-left: 90rpx;*/
   }
   .confirmOrder .confirmOrder-address .address-rightArrow{
     width: 40rpx;
@@ -234,7 +234,7 @@
           <text class="address-phone textColor left">{{addresses.mobile}}</text>
         </view>
         <view>
-          <!--<text class="address-type left">公司</text>-->
+          <text class="address-type left" wx:if="{{addresses.location_type=='company'}}">{{addresses.location_name}}</text>
           <text class="address textColor left">{{addresses.area}}   {{addresses.addr}}</text>
         </view>
       </view>
@@ -245,7 +245,7 @@
     </view>
     <view class="confirmOrder-productIfo">
       <view class="pro-item">
-        <image src="{{groupIfo.groupon_image}}" class="pro-img left"></image>
+        <image src="{{groupIfo.products[0].imageId}}" class="pro-img left"></image>
         <view class="pro-ifo left">
           <text class="pro-title">{{groupIfo.groupon_name}}</text>
           <view class="pro-price">
@@ -368,6 +368,12 @@
             res.data.results.map((item) =>{
               if (item.addr_id ==self.addr_id) {
                 item.area = item.area.split(':')[1]
+                if (item.location_type=="company") {//公司
+                  item.location_name ='公司'
+                }
+                if (item.location_type=="home") {//家
+                  item.location_name ='家'
+                }
                 self.addresses = item
               }
             })
@@ -407,8 +413,9 @@
           console.log(res)
           var res = res.data.results[0]
           //console.log(res.groupon_image)
-
-          res.groupon_image = self.globalData.base_url+self.globalData.version_no+'/img/'+res.groupon_image
+          if (res.products){
+            res.products[0].imageId = self.globalData.base_url+self.globalData.version_no+'/img/'+res.products[0].imageId
+          }
           self.groupIfo = res
           console.log('团购信息===')
           console.log(self.groupIfo)
@@ -445,7 +452,7 @@
         groupId:parseInt(this.groupon_id),
         addressId:parseInt(this.addr_id),
         buyType:this.options.groupType,
-        payment:'wx_lite',
+        payment:wepy.$instance.globalData.platform,//wepy.$instance.globalData.platform  wx_lite
         memo:this.memo,//备注
         is_tax:false//不开发票
       }

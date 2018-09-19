@@ -216,7 +216,7 @@
         client_secret:'guHIwAcXb2onDCzWEjrX05Ej08QZR9rb',
         //device_model:'',//手机品牌
         language:'simplified_chinese',
-        platform:'wx_mini_program',//平台
+        platform:wepy.$instance.globalData.platform,//平台
         suppress_response_code:true,
         type:'Verification'
         //system_version:'11.3',//系统版本
@@ -358,6 +358,7 @@
         client_secret:'guHIwAcXb2onDCzWEjrX05Ej08QZR9rb',
         // refresh_token:'123123',
         suppress_response_code:true,
+        platform:loginIfo.platform
 
       }
       if (type==1) {//验证码登录需要加
@@ -420,7 +421,7 @@
           //openid = res.data.openid //返回openid
           wepy.setStorageSync('openid', res.data.results[0].openid)
           wepy.setStorageSync('memberId', res.data.results[0].memberId)
-          console.log('返回openid='+res.data.results[0].openid)
+          //console.log('返回openid='+res.data.results[0].openid)
         }
       })
     }

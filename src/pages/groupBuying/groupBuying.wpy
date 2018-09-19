@@ -51,7 +51,7 @@
 }
 
 .groupBuying .group-list .group-item .item-two{
-  height: 330rpx;
+  /*height: 330rpx;*/
   margin: 0 auto;
   /*padding-left: 30rpx;*/
   padding-top: 10rpx;
@@ -62,6 +62,9 @@
   padding-top: 20rpx;
   padding-left: 30rpx;
 }
+  .groupBuying .group-list .group-item .item-two .item-title:nth-child(2){
+    font-size: 36rpx;
+  }
 .groupBuying .group-list .group-item .item-two .item-price{
   padding-top: 32rpx;
   padding-bottom: 40rpx;
@@ -347,9 +350,9 @@
       }
     }
     onLoad(options) {
-      console.log('options')
-      console.log(options)
-      console.log('options')
+      // console.log('options')
+      // console.log(options)
+      // console.log('options')
       var loginInfo = wepy.getStorageSync('loginInfo')
       // if (!loginInfo) {
       //   console.log('登录')
@@ -357,10 +360,12 @@
       //   this.$apply()
       // }
 
-
+      var platform = wepy.$instance.globalData.platform
+      console.log(platform)
+      this.getGroupList()
     }
     onShow(){
-      this.getGroupList()
+
     }
     onShareAppMessage(res){
       console.log(res)

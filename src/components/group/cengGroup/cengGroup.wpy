@@ -41,7 +41,7 @@
 }
 #cengGroup .cengGroup-modal .modal-body{
   /*height: 200rpx;*/
-  min-height: 200rpx;
+  min-height: 150rpx;
   background-color: #eeeeee;
   padding-bottom:25rpx;
   max-height:570rpx ;
@@ -55,7 +55,7 @@
     /*line-height: 90rpx;*/
     height: 100rpx;
     line-height: 57rpx;
-    width: 290rpx;
+    /*width: 290rpx;*/
     display: block;
     margin: 0 auto;
     margin-top: 30rpx;
@@ -71,7 +71,7 @@
     color: white;
     font-size: 28rpx;
     margin: 0 auto;
-    margin-top: 30rpx;
+    /*margin-top: 30rpx;*/
     border-radius: 7rpx;
     letter-spacing:2rpx;
   }

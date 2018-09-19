@@ -92,30 +92,38 @@
   height: 96rpx;
   line-height: 96rpx;
 }
-.detal-bottom-invite view:nth-child(1) {
+.detal-bottom-invite .one {
   width: 200rpx;
   border-right: 1rpx solid #dadada;
 }
-.detal-bottom-invite view:nth-child(1) text{
+.detal-bottom-invite .one text{
   display: block;
   height: 40rpx;
   line-height: 40rpx;
   margin-left: 45rpx;
 }
-  .detal-bottom-invite view:nth-child(1) text:nth-child(1){
+  .detal-bottom-invite .one text:nth-child(1){
     margin-top: 10rpx;
     font-size: 28rpx;
     color:#3f2227;
   }
-.detal-bottom-invite view:nth-child(1) text:nth-child(2){
+.detal-bottom-invite .one text:nth-child(2){
   font-size: 28rpx;
   font-weight: bolder;
   color:#3f2227;
 }
-.detal-bottom-invite view:nth-child(2){
-  width:300rpx;
+.detal-bottom-invite .two{
+  width:320rpx;
+  position: relative;
+  overflow-x: scroll
 }
-.detal-bottom-invite view:nth-child(3){
+.detal-bottom-invite .two .invite-preson{
+  overflow: hidden;
+  /*width:320rpx;*/
+  height: 96rpx;
+  overflow-x: scroll;
+}
+.detal-bottom-invite .three{
   width:220rpx;
   text-align: center;
   background-color: #3e1e1f;
@@ -123,6 +131,31 @@
   font-size: 28rpx;
   letter-spacing: 2rpx;
   /*font-weight: bolder;*/
+}
+  /*邀请好友过来的*/
+.detal-bottom-invite .icon-view{
+  width: 94rpx;
+  height: 96rpx;
+  float: left;
+  line-height: 96rpx;
+  margin-top: 10rpx;
+  /*padding-top: 55rpx;*/
+}
+.detal-bottom-invite .icon-view:nth-child(1){
+  margin-left: 30rpx;
+}
+.detal-bottom-invite .icon-add{
+  width:20rpx;
+  height: 20rpx;
+  padding:16rpx 10rpx;
+  display: inline-block;
+}
+.detal-bottom-invite .pro-img{
+  width: 55rpx;
+  height: 55rpx;
+  border-radius: 50%;
+  background-color: #eeeeee;
+  display: inline-block;
 }
 </style>
 <template>
@@ -150,14 +183,19 @@
   </view>
 
   <view class="detal-bottom-invite" wx:if="{{options.groupType=='join'}}">
-    <view class="left">
+    <view class="left one">
       <text>剩余</text>
-      <text>15:42:13</text>
+      <text>{{groupDetail.countdown}}</text>
     </view>
-    <view class="left">
-
+    <view class="left two">
+      <view class="invite-preson" style="width:{{groupDetail.width}}rpx">
+        <view class="icon-view"  wx:for="{{groupDetail.groupAct.buyers}}" wx:for-index="index" wx:for-item="two" wx:key="id" catchtouchmove="ture">
+          <image src="{{two.member_img}}" class="pro-img"></image>
+          <image class="icon-add" wx:if="{{index!=groupDetail.groupAct.buyers.length-1}}" src="../../../image/icon/icon-add.png"></image>
+        </view>
+      </view>
     </view>
-    <view class="right" @tap="inviteGroupBtn">
+    <view class="right three" @tap="inviteGroupBtn">
       我要参团
     </view>
   </view>
@@ -168,6 +206,7 @@
 
 <script>
   import wepy from 'wepy';
+  import util from '@/mixins/util'
   import { connect } from 'wepy-redux';
   import WxParse from '../../../wxParse/wxParse.js'
   import cengGroup from '@/components/group/cengGroup/cengGroup'
@@ -290,7 +329,7 @@
         title: '加载中',
       })
       var publicStr = wepy.$instance.getPublicData()
-      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy'+publicStr
+      let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/'+this.options.groupon_id+publicStr
       wepy.request({
         url:url,
         method: "get",
@@ -298,28 +337,61 @@
           "Content-Type": "application/json; charset=UTF-8"  //post
         },
         success: function(res) {
-          var img = ''
-          res.data.results.map((item) =>{
-            if (item.groupon_id==self.options.groupon_id){
-              img = item.intro
-              self.groupDetail = item
-            }
-          })
-          console.log(self.groupDetail)
-          var name = wepy.getStorageSync('loginInfo').name
-          if (self.groupDetail.groupAct) {//查询本人是否参
-            self.groupDetail.groupAct.buyers.map((one) =>{
-              if(one.name==name){
-                console.log('已参与')
-              }
+
+          console.log(res)
+          var data = res.data.results[0]
+          var img = data.intro
+          if (data.groupAct) {
+            data.groupAct.buyers.map((item) =>{
+              item.member_img = self.globalData.base_url+self.globalData.version_no+'/img/'+item.member_img
+
             })
+            var cunt = parseInt(data.person) - parseInt(data.groupAct.join_num)
+            if (cunt>0){//实际人数少于  总人数
+              for (var i=0;i<cunt;i++) {
+                var per = {
+                  member_img:''
+                }
+                data.groupAct.buyers.push(per)
+              }
+              data.width = data.groupAct.buyers.length*94+30//设置参加宽度
+            }
+            var  create_time= parseInt(data.groupAct.create_time)
+            var  remain_time = parseInt(data.remain_time)
+
+            var intervalTime = setInterval(function () {
+              var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+              var currentTime = create_time+remain_time-currentInterval
+              data.countdown = util.formatDuring(currentTime*1000)
+
+              self.$apply();
+            }, 1000)
           }
 
+
+          self.groupDetail = data
+          console.log(self.groupDetail)
           WxParse.wxParse('article', 'html', img, self,1);
           //imglist
-          //wepy.removeStorageSync('imglist')//详情页存储的介绍信息
+          wepy.removeStorageSync('imglist')//详情页存储的介绍信息
           wepy.hideLoading()
           self.$apply()
+          // res.data.results.map((item) =>{
+          //   if (item.groupon_id==self.options.groupon_id){
+          //     img = item.intro
+          //     self.groupDetail = item
+          //   }
+          // })
+          // var name = wepy.getStorageSync('loginInfo').name
+          // if (self.groupDetail.groupAct) {//查询本人是否参
+          //   self.groupDetail.groupAct.buyers.map((one) =>{
+          //     if(one.name==name){
+          //       console.log('已参与')
+          //     }
+          //   })
+          // }
+
+
         }
       })
 
@@ -327,6 +399,7 @@
     onLoad(options) {
       console.log(options)
       this.options = options
+      // this.options.groupType='join'
       this.getGroupList()
 
     }

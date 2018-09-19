@@ -236,9 +236,7 @@
         })
       },
       groupState(item){//拼团详情
-        console.log('===')
-        console.log(item)
-        console.log('===')
+
         wepy.navigateTo({
           url: '../../groupBuying/groupState/groupState?groupOn_id='+item.groupOn_id
         })
@@ -395,7 +393,7 @@
                   }
                 }else {//组团不成功  (未支付,已过期,待成团)  pendding
                   //createtime
-                  var  create_time= parseInt(item.createtime)//item.groups.create_time
+                  var  create_time= parseInt(item.groups.groupAct.create_time)//item.groups.create_time   item.createtime
                   var  remain_time = parseInt(item.groups.remain_time)
                   var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
                   var all = create_time+remain_time
@@ -404,6 +402,10 @@
                   // console.log(create_time)
                   // console.log(remain_time)
                   // console.log(currentInterval)
+                  if (item.order_id=="180918163215811") {
+                    console.log(create_time+remain_time-currentInterval)
+                  }
+
                   if (create_time+remain_time> currentInterval) {//组团未过期
                     if (item.pay_status=='1') {//组团中
                       item.typeText = '待成团'

@@ -61,12 +61,12 @@ export default class extends wepy.app {
     // base_url:'https://api.shinshop.com/',//正式
     userInfo: null,//微信个人信息
     loginInfo:null,//登陆后的个人信息
-    platform:'wx_mini_program',//平台(小程序)
+    platform:'wxprogram',//平台(小程序)wx_mini_program
     language:'simplified_chinese',
     suppress_response_code:true,
     tabBar: {
       "color": "#9E9E9E",
-      "selectedColor": "#f00",
+      "selectedColor": "#46292b",
       "backgroundColor": "#fff",
       "borderStyle": "#ccc",
       "list": [
@@ -76,7 +76,7 @@ export default class extends wepy.app {
           "iconPath": "/image/tabbar/groupBuying_A.png",
           "selectedIconPath": "/image/tabbar/groupBuying_B.png",
           "clas":"menu-item",
-          "selectedColor": "#3f2121",
+          "selectedColor": "#b58151",
           active: true
         },
         {
@@ -84,7 +84,7 @@ export default class extends wepy.app {
           "text": "秒杀",
           "iconPath": "/image/tabbar/secondkill_A.png",
           "selectedIconPath": "/image/tabbar/secondkill_B.png",
-          "selectedColor": "#3f2121",
+          "selectedColor": "#b58151",
           "clas": "menu-item",
           active: false
         },
@@ -93,7 +93,7 @@ export default class extends wepy.app {
           "text": "我的",
           "iconPath": "/image/tabbar/user_A.png",
           "selectedIconPath": "/image/tabbar/user_B.png",
-          "selectedColor": "#3f2121",
+          "selectedColor": "#b58151",
           "clas": "menu-item",
           active: false
         }

@@ -25,8 +25,9 @@
     margin-top: 16rpx;
   }
   .name{
-    font-size: 20rpx;
+    font-size:23rpx;
     display: block;
+    font-weight: bolder;
     margin-top: 1rpx;
   }
   .clear{
@@ -43,10 +44,11 @@
 <template name="tabBar">
   <view class="tab-bar" style="color: {{tabBar.color}}; background: {{tarBar.backgroundColor}}; {{tabBar.position=='top'? 'top: 0' : 'bottom: 0'}}; {{tabBar.borderStyle? (tabBar.position=='top'? 'border-bottom: solid 1px '+tabBar.borderStyle + ';' : 'border-top: solid 1rpx '+tabBar.borderStyle + ';') : ''}}">
     <block wx:for="{{tabBar.list}}" wx:key="pagePath" >
-      <view @tap="itemClick({{item}})" class="{{item.clas}}" style="{{item.active? 'color: '+(item.selectedColor? item.selectedColor : tabBar.selectedColor) : ''}}">
+      <!--style="{{item.active? 'color: '+(item.selectedColor? item.selectedColor : tabBar.selectedColor) : ''}}"-->
+      <view @tap="itemClick({{item}})" class="{{item.clas}}" >
         <image src="{{item.selectedIconPath}}" wx:if="{{item.active}}" class="img"></image>
         <image src="{{item.iconPath}}" wx:if="{{!item.active}}" class="img"></image>
-        <text class="name">{{item.text}}</text>
+        <text class="name" style="color:{{item.active?item.selectedColor : tabBar.selectedColor}}">{{item.text}}</text>
       </view>
     </block>
     <view class="clear"></view>
