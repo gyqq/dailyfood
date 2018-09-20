@@ -320,7 +320,7 @@
     <view class="orderDetail-ifo" style="padding-bottom: 10rpx">
       <view class="ifo">
         <text class="left">订单编号:</text>
-        <text class="left">{{orderDetail.order_id}}</text>
+        <text class="left">{{orderDetail.out_trade_no}}</text>
         <text class="right" @tap="copyBtn">复制</text>
       </view>
       <view class="ifo">
@@ -358,7 +358,7 @@
         <button class="operation-btn right" @tap="groupState">拼团详情</button>
       </view>
       <view wx:if="{{orderDetail.typeText=='待收货'}}">
-        <button class="operation-btn right">查看物流</button>
+        <button class="operation-btn right" @tap="logisticsBtn">查看物流</button>
         <button class="operation-btn right" @tap="groupState">拼团详情</button>
       </view>
       <view wx:if="{{orderDetail.typeText=='已完成'}}">
@@ -406,7 +406,7 @@
       },
       copyBtn(){//复制
         wepy.setClipboardData({
-          data: this.orderDetail.order_id,
+          data: this.orderDetail.out_trade_no,
           success: function(res) {
 
           }
@@ -558,7 +558,13 @@
             self.$apply()
           }
         })
-      }
+      },
+      logisticsBtn(){//物流页面
+        console.log()
+        wepy.navigateTo({
+          url: '../../../user/logistics/logistics'
+        })
+      },
     };
 
     events = {};
@@ -699,7 +705,7 @@
                 var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
                 var s = time - currentInterval
                 formatDuring = util.formatDuringHM(s*1000)
-                self.bagText = '剩'+formatDuring+'自动取消团购订单'//描述
+                self.bagText = '剩'+formatDuring+'自动取消团购订单,请尽快支付,如有问题请联系客服'//描述
                 self.$apply();
               }, 1000)
 

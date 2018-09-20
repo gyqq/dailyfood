@@ -94,16 +94,16 @@
   <view id="invoice">
     <view class="invoice-top">
       <text class="top-title">发票类型</text>
-        <view class="left invoice-type" style="margin-left: 40rpx">
-          <image @tap="selectBtn(1)" class="left" src="{{selectTyle==1?'../../image/icon/icon-select.png':'../../image/icon/icon-noneSelect.png'}}"></image>
-          <text class="left" style="color:{{selectTyle==1?'#b5824d':'#3e2123'}}"> 不需要发票</text>
+        <view class="left invoice-type" style="margin-left: 40rpx" @tap="selectBtn(1)">
+          <image  class="left" src="{{invoiceInput.is_tax==1?'../../image/icon/icon-select.png':'../../image/icon/icon-noneSelect.png'}}"></image>
+          <text class="left" style="color:{{invoiceInput.is_tax==1?'#b5824d':'#3e2123'}}"> 不需要发票</text>
         </view>
-      <view class="left invoice-type" style="margin-left: 103rpx">
-        <image @tap="selectBtn(2)" class="left" src="{{selectTyle==2?'../../image/icon/icon-select.png':'../../image/icon/icon-noneSelect.png'}}"></image>
-        <text class="left" style="color:{{selectTyle==2?'#b5824d':'#3e2123'}}">公司发票</text>
+      <view class="left invoice-type" style="margin-left: 103rpx" @tap="selectBtn(2)">
+        <image  class="left" src="{{invoiceInput.is_tax==2?'../../image/icon/icon-select.png':'../../image/icon/icon-noneSelect.png'}}"></image>
+        <text class="left" style="color:{{invoiceInput.is_tax==2?'#b5824d':'#3e2123'}}">公司发票</text>
       </view>
     </view>
-    <view class="invoice-info" wx:if="{{selectTyle==2}}">
+    <view class="invoice-info" wx:if="{{invoiceInput.is_tax==2}}">
       <view class="info-item">
         <text class="input-lable left">发票抬头</text>
         <input value="{{invoiceInput.tax_company}}" bindinput="tax_companyChange" class="input-value left" placeholder="请输入发票抬头"/>
@@ -156,8 +156,9 @@
    // mixins = [testMixin];
 
     data = {
-      selectTyle:1,//1不需要发票  2公司发票
+      //selectTyle:1,//1不需要发票  2公司发票
       invoiceInput:{
+        is_tax:1,
         tax_company:'',//发票抬头
         tax_no:'', //发票税号
         tax_email:'',//发票接收邮箱
@@ -170,13 +171,19 @@
 
     methods = {
       selectBtn(type){//选择
-        if (type==this.selectTyle) {//防止重复点击  选中
+        if (type==this.invoiceInput.is_tax) {//防止重复点击  选中
           return false
         }
-        if (this.selectTyle == 1){//更改为  公司发票
-          this.selectTyle=2
+        if (this.invoiceInput.is_tax == 1){//更改为  公司发票
+          this.invoiceInput.is_tax=2
         }else {//更改为  不需要发票
-          this.selectTyle = 1
+          //this.invoiceInput.is_tax = 1
+            this.invoiceInput = {
+              is_tax:1,
+              tax_company:'',//发票抬头
+              tax_no:'', //发票税号
+              tax_email:'',//发票接收邮箱
+          }
         }
         this.$apply()
       },
@@ -196,18 +203,34 @@
           //   tax_email:'',//发票接收邮箱
           // }
         //console.log(this.is_email(this.invoiceInput.tax_email))
-        if (!this.is_email(this.invoiceInput.tax_email)) {//邮箱 不合法
-          wx.showToast({
-            title: '请输入正确邮箱',
-            icon: 'success',
-            duration: 2000
-          })
-          return false
+
+        if (this.invoiceInput.is_tax==2) {
+          var tax_no_length = this.invoiceInput.tax_no.length
+          console.log(tax_no_length)
+          if (tax_no_length==15 || tax_no_length==17 || tax_no_length==18){
+
+          }else{
+            wx.showToast({
+              title: '请输入正确税号',
+              icon: 'success',
+              duration: 2000
+            })
+            return false
+          }
+
+          if (!this.is_email(this.invoiceInput.tax_email)) {//邮箱 不合法
+            wx.showToast({
+              title: '请输入正确邮箱',
+              icon: 'success',
+              duration: 2000
+            })
+            return false
+          }
         }
         var invoice = {
-          is_tax:this.selectTyle,//1 不开 2公司发票
+          is_tax:this.invoiceInput.is_tax,//1 不开 2公司发票
           tax_company:this.invoiceInput.tax_company,//发票抬头
-          tax_no:this.invoiceInput.tax_company, //发票税号
+          tax_no:this.invoiceInput.tax_no, //发票税号
           tax_email:this.invoiceInput.tax_email,//发票接收邮箱
         }
         wepy.setStorageSync('invoice',invoice)
@@ -237,7 +260,11 @@
 
     }
     onLoad() {
-
+      var invoice = wepy.getStorageSync('invoice') ||{}
+      if (invoice) {
+         this.invoiceInput = invoice
+        this.$apply()
+      }
     }
   }
 </script>

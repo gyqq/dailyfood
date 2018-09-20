@@ -77,13 +77,13 @@
   }
   /*商品信息*/
   .confirmOrder .confirmOrder-proTitle{
-    margin-top: 10rpx;
+    margin-top: 20rpx;
     height: 88rpx;
     line-height: 88rpx;
     color:#3F2021;
     font-size:24rpx;
     background-color: white;
-    margin-bottom: 4rpx;
+    margin-bottom: 2rpx;
   }
   .confirmOrder .confirmOrder-proTitle .left{
     margin-left: 30rpx;
@@ -131,13 +131,13 @@
   }
   /*发票*/
   .confirmOrder .confirmOrder-invoice{
-    margin-top: 10rpx;
+    margin-top: 20rpx;
     height: 88rpx;
     line-height: 88rpx;
     color:#3F2021;
     font-size:24rpx;
     background-color: white;
-    margin-bottom: 4rpx;
+    margin-bottom: 2rpx;
   }
   .confirmOrder .confirmOrder-invoice .left{
     margin-left: 30rpx;
@@ -234,7 +234,7 @@
           <text class="address-phone textColor left">{{addresses.mobile}}</text>
         </view>
         <view>
-          <text class="address-type left" wx:if="{{addresses.location_type=='company'}}">{{addresses.location_name}}</text>
+          <text class="address-type left" wx:if="{{addresses.location_type=='company' || addresses.location_type=='home'}}">{{addresses.location_name}}</text>
           <text class="address textColor left">{{addresses.area}}   {{addresses.addr}}</text>
         </view>
       </view>
@@ -269,7 +269,8 @@
       </view>
       <view class="confirmOrder-item">
         <text class="left">运费(快递)</text>
-        <text class="right">￥{{groupIfo.is_free_delivery=='true'?'0':'NAN'}}</text>
+        <!--{{groupIfo.is_free_delivery=='false'?'0':'NAN'}}-->
+        <text class="right">￥0</text>
       </view>
       <view class="confirmOrder-item">
         <text class="left">应付款(含运费)</text>
@@ -379,11 +380,14 @@
             })
           }else {//初始进来的地址
             res.data.results.map((item) =>{
-              if (self.addr_id==item.addr_id){//存在选择id
-                item.area = item.area.split(':')[1]
-                self.addresses = item
-                return false
-              } else if(item.def_addr=='1'){//默认地址
+
+               if(item.def_addr=='1'){//默认地址
+                 if (item.location_type=="company") {//公司
+                   item.location_name ='公司'
+                 }
+                 if (item.location_type=="home") {//家
+                   item.location_name ='家'
+                 }
                 item.area = item.area.split(':')[1]
                 self.addresses = item
                 self.addr_id  = item.addr_id
@@ -392,7 +396,7 @@
             })
           }
 
-
+          console.log(self.addresses)
          //console.log(self.addr_id)
           self.$apply()
         }
@@ -447,6 +451,15 @@
       // tax_no，  发票税号
       // tax_email，发票接收邮箱
       // memo，      订单备注
+      //def_addr
+      if (!this.addr_id) {
+        wx.showToast({
+          title: '请选择收货地址',
+          icon: 'success',
+          duration: 2000
+        })
+        return false
+      }
       var data = {
         _method:'POST',
         groupId:parseInt(this.groupon_id),
@@ -544,10 +557,23 @@
           'fail': function (res) {
             console.log(res)
             console.log('支付错误'+self.grouponIfo.player_order_id)
-
-            wepy.redirectTo({
-              url: '../orderDetail/orderDetail?order_id='+self.grouponIfo.player_order_id
+            wepy.showModal({
+              title: '确认要离开收银台?',
+              content:'2小时内未付款的团购订单将自动取消,请尽快完成支付',
+              cancelText:'确认离开',
+              confirmText:'继续支付',
+              success: function(res) {
+                console.log(res)
+                if (res.confirm){//确定
+                  self.getPayData(self.grouponIfo)
+                }else {
+                  wepy.redirectTo({
+                    url: '../orderDetail/orderDetail?order_id='+self.grouponIfo.player_order_id
+                  })
+                }
+              }
             })
+
 
           },
           'complete': function (res) {//上线注释
@@ -581,8 +607,9 @@
       //console.log('onshow')
       this.getAddress()//收货地址
       this.setInvoice()//设置发票信息
-
-
+    }
+    onUnload(){
+      wepy.$instance.clearStorageData()
     }
 
 

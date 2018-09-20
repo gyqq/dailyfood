@@ -298,6 +298,10 @@
           "Content-Type": "application/json; charset=UTF-8",  //post
         },
         success: function(res) {
+          console.log(res)
+          if (!res.data.results) {
+            return false
+          }
           var memberId = wx.getStorageSync('memberId')
           res.data.results.map((item) =>{
             item.discount =parseInt(item.discount)
@@ -323,16 +327,13 @@
                         item.groupAct.buyers.push(per)
                       }
                     }
-
                     item.invite =true//显示邀请
                   }
-
                   // return false
                 }
               })
               //console.log('===========')
             }
-
           })
           self.groupList = res.data.results
           console.log(res)

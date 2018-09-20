@@ -35,7 +35,8 @@
     width: 530rpx;
     font-size: 26rpx;
     color: #3d2120;
-    height: 120rpx;
+    margin-bottom: 10rpx;
+    /*height: 160rpx;*/
   }
   .addressList .addressList-item .item-ifo .item-basicIfo{
     margin-top: 25rpx;
@@ -47,7 +48,7 @@
   /*编辑*/
   .addressList .addressList-item .item-editor{
     width: 107rpx;
-    height: 130rpx;
+    height: 120rpx;
     line-height: 120rpx;
     font-size: 26rpx;
     color: #b68052;
@@ -96,7 +97,7 @@
     </view>
   </view>
   <view class="address-bg">
-    <view class="address-Btn">添加新地址</view>
+    <view class="address-Btn" @tap="addAddressBtn">添加新地址</view>
   </view>
 
 </template>
@@ -125,7 +126,7 @@
       editBtn(item){//收货地址编辑
         console.log(item.addr_id)
         wepy.navigateTo({
-          url: '../../user/address/address_EA?addr_id='+item.addr_id
+          url: '../../user/address/address_EA?addr_id='+item.addr_id+'&type=edit'
         })
       },
       selectAddress(item){//选择 收货地址跳转 订单确认页
@@ -139,7 +140,11 @@
             delta: 1
           })
         }
-
+      },
+      addAddressBtn(){//新增地址
+        wepy.navigateTo({
+          url: '../../user/address/address_EA?addr_id=0&type=creat'
+        })
       },
     };
     getAddresList(){//获取全部收货地址
@@ -182,6 +187,9 @@
     onLoad(options) {
       this.options = options
       //console.log(this.options)
+
+    }
+    onShow(){
       this.getAddresList()//获取全部收货地址
     }
   }

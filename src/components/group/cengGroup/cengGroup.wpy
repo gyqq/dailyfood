@@ -221,6 +221,7 @@
       getcengGroupList(groupId,remain_time,groupDetail){
         var self = this
         self.groupDetail = groupDetail
+        self.results = []
         console.log(self.groupDetail)
         var publicStr = wepy.$instance.getPublicData()
         var url = self.globalData.base_url+self.globalData.version_no+'/group-buy/join_group/'+groupId+publicStr

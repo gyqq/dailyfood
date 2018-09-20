@@ -43,7 +43,8 @@ export default class extends wepy.app {
       'pages/user/user',
       'pages/user/myGroup/myGroup',
       'pages/user/address/address',
-      'pages/user/address/address_EA'
+      'pages/user/address/address_EA',
+      'pages/user/logistics/logistics'
     ],
     window: {
       backgroundTextStyle: 'light',

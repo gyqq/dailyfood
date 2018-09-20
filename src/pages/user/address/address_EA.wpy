@@ -137,11 +137,11 @@
   <view class="address_EA">
     <view class="address_EA-item">
       <text class="item-lable left" >收货人</text>
-      <input class="left item-value" value="{{addressIfo.name}}" bindinput="nameInputChange" placeholder="请输入收货人"/>
+      <input class="left item-value" value="{{addressIfo.name}}" bindblur="nameInputChange" placeholder="请输入收货人"/>
     </view>
     <view class="address_EA-item">
-      <text class="item-lable left" animation='{{animation}}'>手机号</text>
-      <input class="left item-value" value="{{addressIfo.mobile}}" bindinput="mobileInputChange" placeholder="请输入收货人手机号" type="number"/>
+      <text class="item-lable left">手机号</text>
+      <input class="left item-value" value="{{addressIfo.mobile}}" bindblur="mobileInputChange" placeholder="请输入收货人手机号" type="number"/>
     </view>
     <view class="address_EA-item">
       <text class="item-lable left">收货地区</text>
@@ -151,20 +151,23 @@
     </view>
     <view class="address_EA-item">
       <text class="item-lable left">详细地址</text>
-      <input class="left item-value" style="width:500rpx" value="{{addressIfo.addr}}" bindinput="addrInputChange" placeholder="请输入详细地址"/>
+      <input class="left item-value" style="width:500rpx" value="{{addressIfo.addr}}" bindblur="addrInputChange" placeholder="请输入详细地址"/>
     </view>
     <view class="address_EA-item">
       <text class="item-lable left">地址类型</text>
-      <text class="address-type left" id="{{selectType==1?'address-type-select':''}}" @tap="selectAddressType(1)">公司</text>
-      <text class="address-type left" id="{{selectType==2?'address-type-select':''}}" @tap="selectAddressType(2)">家</text>
+      <text class="address-type left" id="{{addressIfo.location_type=='company'?'address-type-select':''}}" @tap="selectAddressType('company')">公司</text>
+      <text class="address-type left" id="{{addressIfo.location_type=='home'?'address-type-select':''}}" @tap="selectAddressType('home')">家</text>
     </view>
     <view class="address_EA-item set">
       <text class="item-lable left">设置为默认地址</text>
       <switch bindchange="switchChange" checked="{{addressIfo.def_addr=='1'?true:false}}" class="right" color="#b58151"/>
     </view>
-    <view style="position:fixed" class="operation">
+    <view style="position:fixed" class="operation" wx:if="{{options.type=='edit'}}">
       <button @tap="deleteBtn">删除</button>
-      <button @tap='saveBtn'>保存</button>
+      <button @tap='editBtn'>保存</button>
+    </view>
+    <view style="position:fixed" class="operation" wx:if="{{options.type=='creat'}}">
+      <button @tap='creatBtn' style="background-color: #3e2020;color: white;width: 660rpx;letter-spacing: 5rpx;font-size:31rpx">保存</button>
     </view>
   </view>
 
@@ -246,11 +249,22 @@
     //mixins = [testMixin];
 
     data = {
-      animation:{},
+      options:{},
       globalData:wepy.$instance.globalData,
       addr_id:'',//编辑的id
-      selectType:0,//地址类型
-      addressIfo:{},//
+      selectType:'',//地址类型
+      addressIfo:{
+        _method:'',
+        name:'',
+        area:'',
+        addr:'',
+        zip:'2300233',
+        mobile:'',
+        day:'任意日期',
+        time:'任意时间段',
+        def_addr:'0',
+        location_type:'none'
+      },//
       provincesView:false,
 
 
@@ -346,6 +360,7 @@
       this.areas = this.placeArray[m].child[n].child
       this.$apply()
       this.area = this.areas[0]
+
       this.$apply()
     }
 
@@ -354,7 +369,14 @@
 
     methods = {
       selectAddressType(type){//地址类型点击事件
-        this.selectType = type
+        if (this.addressIfo.location_type==type){//取消
+          //console.log('取消')
+          this.addressIfo.location_type = 'none'
+        }else {//选择
+          //console.log('选择')
+          this.addressIfo.location_type = type
+        }
+
       },
       openProvince(type){//选择省市区
         console.log(type)
@@ -380,18 +402,57 @@
         }
       },
       nameInputChange(e){//收货人
+        console.log(e)
         this.addressIfo.name =e.detail.value
+        this.$apply()
       },
       mobileInputChange(e){//手机号
-        this.addressIfo.name =e.detail.value
+        this.addressIfo.mobile =e.detail.value
+        this.$apply()
       },
       addrInputChange(e){//详细地址
         this.addressIfo.addr =e.detail.value
+        this.$apply()
       },
       deleteBtn(){//删除
         console.log(this.addressIfo)
+        var self =this
+        var publicStr = wepy.$instance.getPublicData()
+        let url = self.globalData.base_url+self.globalData.version_no+'/member/addresses/'+this.addr_id+publicStr
+        //console.log(url)
+        var data = {
+          _method:'DELETE'
+        }
+        wepy.request({
+          url:url,
+          method: "DELETE",
+          data:data,
+          header: {
+            "Content-Type": "application/json; charset=UTF-8"  //post
+          },
+          success: function(res) {
+            console.log(res)
+            if (res.data.status=='1'){
+              wx.showToast({
+                title: '删除成功',
+                icon: 'success',
+                duration: 2000
+              })
+              self.$apply()
+              wepy.navigateBack({
+                delta: 1
+              })
+            }else {
+              wx.showToast({
+                title: '删除失败',
+                icon: 'success',
+                duration: 2000
+              })
+            }
+          }
+        })
       },
-      saveBtn(){//保存
+      editBtn(){//编辑保存
         console.log(this.addressIfo)
         var self =this
         var publicStr = wepy.$instance.getPublicData()
@@ -407,6 +468,7 @@
           day:this.addressIfo.day,
           time:this.addressIfo.time,
           def_addr:this.addressIfo.def_addr,
+          location_type:this.addressIfo.location_type
         }
         wepy.request({
           url:url,
@@ -417,11 +479,79 @@
           },
           success: function(res) {
             console.log(res)
-
-            self.$apply()
+            if (res.data.status=='1'){
+              wx.showToast({
+                title: '编辑成功',
+                icon: 'success',
+                duration: 2000
+              })
+              self.$apply()
+              wepy.navigateBack({
+                delta: 1
+              })
+            }else {
+              wx.showToast({
+                title: '编辑失败',
+                icon: 'success',
+                duration: 2000
+              })
+            }
+            // self.$apply()
+            // wepy.navigateBack({
+            //   delta: 1
+            // })
           }
         })
-      }
+      },
+      creatBtn(){//新增保存
+        console.log(this.addressIfo)
+        var self =this
+        var publicStr = wepy.$instance.getPublicData()
+        let url = self.globalData.base_url+self.globalData.version_no+'/member/addresses'+publicStr
+        //console.log(url)
+        var data = {
+          _method:'POST',
+          name:this.addressIfo.name,
+          area:this.addressIfo.area,
+          addr:this.addressIfo.addr,
+          zip:this.addressIfo.zip,
+          mobile:this.addressIfo.mobile,
+          // day:this.addressIfo.day,
+          // time:this.addressIfo.time,
+          def_addr:this.addressIfo.def_addr,
+          location_type:this.addressIfo.location_type
+        }
+        console.log(data)
+        wepy.request({
+          url:url,
+          method: "post",
+          data:data,
+          header: {
+            "Content-Type": "application/json; charset=UTF-8"  //post
+          },
+          success: function(res) {
+            console.log(res)
+            if (res.data.status=='1'){
+              wx.showToast({
+                title: '保存成功',
+                icon: 'success',
+                duration: 2000
+              })
+              self.$apply()
+              wepy.navigateBack({
+                delta: 1
+              })
+            }else {
+              wx.showToast({
+                title: '保存失败',
+                icon: 'success',
+                duration: 2000
+              })
+            }
+
+          }
+        })
+      },
     };
 
     events = {};
@@ -443,27 +573,21 @@
           console.log(self.addressIfo)
           //selectType
 
-          if ( self.addressIfo.location_type=="company") {
-            self.selectType = 1
-          }else if (self.addressIfo.location_type=="home") {
-            self.selectType = 2
-          }
+          // if ( self.addressIfo.location_type=="company") {
+          //   self.selectType = ''
+          // }else if (self.addressIfo.location_type=="home") {
+          //   self.selectType = 2
+          // }
           console.log('获取地址详情')
-          var animation = wepy.createAnimation({
-            duration: 10000,
-            timingFunction: "ease-in-out",
-            delay: 0
-          })
-          //1隐藏
-          //0显示
-          animation.opacity(0,1).step();//修改透明度,放大
-          // animation.opacity(0,1).step();
-          self.animation = animation.export();
+          wepy.hideLoading()
           self.$apply()
         }
       })
     }
     getProvincesAll(){//省市区数据
+      wepy.showLoading({
+        title: '加载中',
+      })
       var self =this
       var publicStr = wepy.$instance.getPublicData()
       let url = self.globalData.base_url+self.globalData.version_no+'/addresses/dropdown'
@@ -477,6 +601,7 @@
         success: function(res) {
           //console.log(res.data)
           var data = res.data.results[0]
+          console.log(data)
           //placeArray = []
           for (var i in data) {
             self.placeArray.push(data[i]); //值
@@ -487,14 +612,22 @@
           self.getCitys(0)
           self.getAreas(0,0)
           self.$apply()
+          if (self.options.type=='creat'){
+            wepy.hideLoading()
+          }else {
+            self.getAddress()//收货信息
+          }
+
         }
       })
     }
     onLoad(options) {
       //console.log(options)
       //console.log(placeArray)
+      console.log(options)
+      this.options = options
       this.addr_id = options.addr_id
-      this.getAddress()//收货信息
+
       this.getProvincesAll()
       //==========
       // wepy.setNavigationBarTitle({

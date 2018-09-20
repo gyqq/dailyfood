@@ -102,6 +102,34 @@
     margin-right: 5%;
 
   }
+  /*列表无数据*/
+  #myGroup .group-list .group-tip{
+    margin-top: 280rpx;
+    text-align: center;
+  }
+  #myGroup .group-list .group-tip image{
+    width:160rpx;
+    height: 160rpx;
+    display: block;
+    margin: 0 auto;
+  }
+  #myGroup .group-list .group-tip .title{
+    margin-top: 20rpx;
+    color: #959595;
+    font-size: 24rpx;
+  }
+  #myGroup .group-list .group-tip .Visit{
+    background:#3F2021;
+    color: white;
+    width: 250rpx;
+    margin: 0 auto;
+    font-size: 24rpx;
+    letter-spacing: 2rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    margin-top:20rpx;
+    border-radius: 4rpx;
+  }
   /*按钮*/
   #myGroup .item-operation{
     height: 90rpx;
@@ -167,7 +195,7 @@
           </view>
           <view wx:if="{{item.typeText=='待收货'}}">
             <text class="btn" @tap="groupState({{item.groupOn_id}})">拼团详情</text>
-            <button class="btn">查看物流</button>
+            <button class="btn" @tap="logisticsBtn({{item}})">查看物流</button>
           </view>
           <view wx:if="{{item.typeText=='(团购结束)已过期' || item.typeText=='(未支付)已过期'}}">
             <button class="btn" @tap="cancelGroup({{item}})">取消团购</button>
@@ -179,6 +207,11 @@
         <view class="item-operation" wx:if="{{selectState==3}}">
           <button class="btn" @tap="deleteGroup({{item}})">删除团购</button>
         </view>
+      </view>
+      <view class="group-tip" wx:if="{{groupList.length==0}}">
+        <image src="../../../image/icon/prompt.png"></image>
+        <view class="title">您目前没有团购</view>
+        <view class="Visit" @tap="visitBtn">去逛逛</view>
       </view>
     </view>
   </view>
@@ -329,8 +362,19 @@
           }
         })
       },
+      logisticsBtn(item){//物流页面
+        console.log(item)
+        wepy.navigateTo({
+          url: '../logistics/logistics'
+        })
+      },
       toPay(item){//去付款
         this.getPayData(item)
+      },
+      visitBtn(){//去逛逛
+        wepy.reLaunch({
+          url: '../../groupBuying/groupBuying'
+        })
       }
     };
 

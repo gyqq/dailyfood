@@ -1,0 +1,32 @@
+<style lang="less">
+
+</style>
+<template>
+<!--物流-->
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class logistics extends wepy.page {
+    config = {
+      navigationBarTitleText: '物流'
+    };
+    components = {};
+
+    //mixins = [testMixin];
+
+    data = {};
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>
