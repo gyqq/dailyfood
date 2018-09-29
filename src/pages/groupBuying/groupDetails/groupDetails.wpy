@@ -159,6 +159,7 @@
 }
 </style>
 <template>
+
   <view class="img-list">
     <import src="../../../wxParse/wxParse.wxml"/>
     <block>
@@ -257,8 +258,10 @@
         // })
       },
       callService(){//联系客服
+        //https://ec-api.shinho.net.cn/v1/small/customer_service
+        //https://shinhocloud.kf5.com/kchat/?lang=zh_CN&active_in_iframe=1#/chatbox
         wx.navigateTo({
-          url: './../../webView/webView?url=' + 'https://shinhocloud.kf5.com/kchat/?lang=zh_CN&active_in_iframe=1#/chatbox'
+          url: './../../webView/webView?url=' + 'https://ec-api.shinho.net.cn/v1/small/customerservice'
         })
       },
       cengGroupBtn(){//蹭团
@@ -327,6 +330,7 @@
       var self = this
       wepy.showLoading({
         title: '加载中',
+        mask:true
       })
       var publicStr = wepy.$instance.getPublicData()
       let url = self.globalData.base_url+self.globalData.version_no+'/group-buy/'+this.options.groupon_id+publicStr

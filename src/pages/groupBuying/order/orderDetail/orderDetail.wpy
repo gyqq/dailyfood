@@ -401,7 +401,7 @@
     methods = {
       callService(){//联系客服
         wx.navigateTo({
-          url: './../../webView/webView?url=' + 'https://shinhocloud.kf5.com/kchat/?lang=zh_CN&active_in_iframe=1#/chatbox'
+          url: './../../webView/webView?url=' + 'https://ec-api.shinho.net.cn/v1/small/customerservice'
         })
       },
       copyBtn(){//复制

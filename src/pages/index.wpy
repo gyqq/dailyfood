@@ -94,7 +94,13 @@
 
     onLoad() {
       let self = this
-      var url= wepy.$instance.globalData.tabBar.list[0].pagePath
+      var url = ''
+      wepy.$instance.globalData.tabBar.list.map((item) =>{
+        if (item.active) {
+          url = item.pagePath
+        }
+      })
+      //var url= wepy.$instance.globalData.tabBar.list[0].pagePath
       wepy.redirectTo({//跳转到底部第一个页面
         url:url
       })

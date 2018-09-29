@@ -1,0 +1,183 @@
+<style lang="less">
+  /*基本信息*/
+ .secondkillDetails .Details-two{
+   background: white;
+ }
+ .secondkillDetails .left{
+   display: block;
+   float: left;
+ }
+ .secondkillDetails .right{
+   display: block;
+   float: right;
+ }
+  .secondkillDetails .Details-two .pro-ifo{
+    width:70%;
+    /*margin-top: 35rpx;*/
+  }
+  .secondkillDetails .Details-two{
+    /*padding-bottom: 20rpx;*/
+  }
+  .secondkillDetails .Details-two .pro-ifo text{
+    display:block;
+    margin-left: 30rpx;
+  }
+  .secondkillDetails .Details-two .pro-ifo text:nth-child(1){
+    font-size: 22rpx;
+    color: #b58151;
+    margin-top: 30rpx;
+  }
+  .secondkillDetails .Details-two .pro-ifo text:nth-child(2){
+    font-size: 30rpx;
+    color: #3f1f20;
+    margin-top: 10rpx;
+  }
+  .secondkillDetails .Details-two .pro-ifo text:nth-child(3){
+    font-size: 24rpx;
+    color: #3f1f20;
+    margin-top: 10rpx;
+  }
+  .secondkillDetails .Details-two .detection{
+    width: 100rpx;
+    margin-top: 35rpx;
+    margin-right: 30rpx;
+    position: relative;
+  }
+  .secondkillDetails .Details-two .detection image{
+    width: 100rpx;
+    height: 120rpx;
+  }
+  .secondkillDetails .Details-two .detection .detection-size{
+    position: absolute;
+    color: #cca586;
+    font-size: 34rpx;
+    left: 30rpx;
+    top: 38rpx;
+  }
+  .secondkillDetails .Details-two .two-preferential{
+    width: 90%;
+    height: 70rpx;
+    line-height: 70rpx;
+    font-size:20rpx;
+    margin: 0 auto;
+    margin-top: 10rpx;
+    border-top: 2rpx solid #cfced3;
+  }
+  .secondkillDetails .Details-two .two-preferential text:nth-child(1){
+    display: inline-block;
+    width: 50rpx;
+    height: 30rpx;
+    line-height: 30rpx;
+    background: #8a391b;
+    text-align: center;
+    color: white;
+  }
+  .secondkillDetails .Details-two .two-preferential text:nth-child(2){
+    display: inline-block;
+    height: 30rpx;
+    line-height: 30rpx;
+    color: #b48050;
+    margin-left:20rpx;
+  }
+</style>
+<template>
+<!--秒杀 商品详情-->
+  <view class="secondkillDetails">
+    <swiper autoplay="true" interval="5000" duration="500" indicator-dots="true" indicator-color="" indicator-active-color="#ffffff">
+      <block wx:for="{{Details.images}}" wx:for-item="item" wx:key="id">
+        <swiper-item>
+          <image src="{{item}}" style="width: 100%"/>
+        </swiper-item>
+      </block>
+    </swiper>
+    <view class="Details-two">
+      <view>
+        <view class="left pro-ifo">
+          <text>日常食食</text>
+          <text>农场散养鸡蛋</text>
+          <text>￥17.00</text>
+        </view>
+        <view class="right detection">
+          <image src="../../../image/secondkill/icon-detection.png"></image>
+          <text class="detection-size">59</text>
+        </view>
+      </view>
+      <view class="two-preferential">
+        <text class="">赠品</text>
+        <text class="">新会员首单,满99元送牛肉月饼</text>
+      </view>
+      <view class="two-preferential">
+        <text class="">活动</text>
+        <text class="">购买专题商品满3件九折</text>
+      </view>
+    </view>
+    <view class="">
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+
+  export default class secondkillDetails extends wepy.page {
+    config = {
+      navigationBarTitleText: '商品详情'
+    };
+    components = {};
+
+    //mixins = [testMixin];
+
+    data = {
+      globalData:wepy.$instance.globalData,
+      options:{},
+      Details:{}
+    };
+
+    computed = {};
+
+    methods = {};
+
+    events = {};
+    getDetails(){
+      wepy.showLoading({
+        title: '加载中',
+        mask:true
+      })
+      var self =this
+      var publicStr = wepy.$instance.getPublicData()
+      var url=self.globalData.base_url+self.globalData.version_no+'/products/'+self.options.product_id+publicStr
+      //console.log(url)
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8",  //post
+        },
+        success: function(res) {
+         // console.log(res)
+          var detailes = res.data.results[0]
+          //轮播图处理
+          for (var i = 0;i<detailes.images.length;i++) {
+            detailes.images[i] = self.globalData.base_url+self.globalData.version_no+'/img/'+detailes.images[i]
+          }
+
+
+          self.Details = detailes
+          self.$apply()
+          console.log(self.Details)
+          wepy.hideLoading()
+        },
+        fail:function(res) {
+          console.log(res)
+        }
+      })
+    }
+    onLoad(options) {
+      this.options=options
+      console.log(options)
+      this.getDetails()
+    }
+  }
+</script>

@@ -39,6 +39,7 @@ export default class extends wepy.app {
       'pages/groupBuying/order/orderDetail/orderDetail',
       'pages/webView/webView',
       'pages/secondkill/secondkill',
+      'pages/secondkill/secondkillDetails/secondkillDetails',
       'pages/invoice/invoice',
       'pages/user/user',
       'pages/user/myGroup/myGroup',
@@ -78,7 +79,7 @@ export default class extends wepy.app {
           "selectedIconPath": "/image/tabbar/groupBuying_B.png",
           "clas":"menu-item",
           "selectedColor": "#b58151",
-          active: true
+          active: false
         },
         {
           "pagePath": "/pages/secondkill/secondkill",
@@ -87,7 +88,7 @@ export default class extends wepy.app {
           "selectedIconPath": "/image/tabbar/secondkill_B.png",
           "selectedColor": "#b58151",
           "clas": "menu-item",
-          active: false
+          active: true
         },
         {
           "pagePath": "/pages/user/user",
@@ -117,11 +118,11 @@ export default class extends wepy.app {
   setTabBar () {
     const  tabBarList = this.globalData.tabBar.list.length
     this.globalData.tabBar.list.map((item,index) =>{
-      item.active = false
+      //item.active = false
       item.clas = 'menu-item'+tabBarList
-      if (index==0) {
-        item.active = true
-      }
+      // if (index==1) {
+      //   item.active = true
+      // }
     })
   }
   getPublicData(){//公共参数获取

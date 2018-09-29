@@ -490,11 +490,12 @@
                 delta: 1
               })
             }else {
-              wx.showToast({
-                title: '编辑失败',
-                icon: 'success',
-                duration: 2000
+              wepy.showModal({
+                title:'编辑失败',
+                content:res.data.status_txt,
+                showCancel:false,
               })
+
             }
             // self.$apply()
             // wepy.navigateBack({
@@ -587,6 +588,7 @@
     getProvincesAll(){//省市区数据
       wepy.showLoading({
         title: '加载中',
+        mask:true
       })
       var self =this
       var publicStr = wepy.$instance.getPublicData()

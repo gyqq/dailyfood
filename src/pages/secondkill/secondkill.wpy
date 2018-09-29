@@ -1,10 +1,215 @@
 <style lang="less">
+  page{
+    background-color: #f0eff5;
+  }
+  .secondkill{
+    /*height: 200rpx;*/
+    padding-bottom:97rpx;
+  }
+.secondkill .secondkill-timeList{
+  background: white;
+  height: 105rpx;
+  /*line-height: 90rpx;*/
+  /*position: relative;*/
+  /*width:2916rpx ;*/
 
+}
+.left{
+  display: block;
+  float: left;
+}
+  .right{
+    display: block;
+    float: right;
+  }
+/*隐藏滚动条*/
+  ::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+    color: transparent;
+  }
+  .secondkill .secondkill-timeList .timeList-bgc{
+    width: 190rpx;
+    height: 105rpx;
+    float: left;
+    position: relative;
+  }
+  .secondkill .secondkill-timeList .timeList-item{
+    width: 188rpx;
+    text-align: center;
+    border-right: 1rpx solid #969696;
+    height: 60rpx;
+    line-height: 60rpx;
+    float: left;
+  }
+  .time-three{
+    padding-top: 10rpx;
+    background: #e9d9ca;
+    padding-bottom: 10rpx
+  }
+  .secondkill .secondkill-timeList .timeList-item .time{
+    font-size: 22rpx;
+    color: #333333;
+    display: block;
+    height: 30rpx;
+    line-height: 30rpx;
+    /*font-weight: bold;*/
+  }
+  .secondkill .secondkill-timeList .timeList-item .timeTest{
+    font-size: 24rpx;
+    color: #969696;
+    display: block;
+    height: 30rpx;
+    line-height: 30rpx;
+  }
+  .secondkill .secondkill-timeList .timeList-bgc .arrow_down{
+    width: 30rpx;
+    height:30rpx ;
+    /*position: absolute;*/
+    /*left: 66rpx;*/
+    margin: 0 auto;
+    display: block;
+    margin-top: -10rpx;
+    /*top:65rpx;*/
+  }
+/*选中后更改背景*/
+  .secondkill .secondkill-timeList #select{
+    background: #b58151;
+    color: white;
+  }
+  .secondkill .secondkill-timeList #select .timeList-item text{
+    color: white;
+  }
+  /*时间倒计时*/
+  .secondkill .secondkill-countdown{
+    font-size: 28rpx;
+    text-align: center;
+    color: #333333;
+    height: 57rpx;
+    background: white;
+    /*padding-bottom: 10rpx;*/
+  }
+  /*商品*/
+  .secondkill .secondkill-ProList .pro-item{
+    height: 300rpx;
+    width: 100%;
+    background: white;
+    margin-top: 10rpx;
+  }
+  .secondkill .secondkill-ProList .pro-item .img{
+    width: 230rpx;
+    height: 240rpx;
+    margin-left: 30rpx;
+    margin-top: 30rpx;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo{
+    margin-left: 25rpx;
+    margin-top: 50rpx;
+    width: 420rpx;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .title{
+    font-size: 27rpx;
+    color: #333333;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .lable-one{
+    font-size: 25rpx;
+    color: #333333;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .lable-one .limitPrice{
+    font-size: 28rpx;
+    color: red;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .lable-two{
+    margin-left: 90rpx;
+    font-size: 25rpx;
+    color: #959595;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .lable-two .originalPrice{
+    font-size: 25rpx;
+    color: color: #959595;
+    margin-left: 10rpx;
+    text-decoration:line-through;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .options{
+    margin-top: 45rpx;
+    /*height: 55rpx;*/
+    /*line-height: 55rpx;*/
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .options .btn{
+    color: white;
+    background:#b58151;
+    width: 170rpx;
+    height:55rpx ;
+    line-height: 55rpx;
+    text-align: center;
+    font-size: 26rpx;
+    border-radius: 5rpx;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .options .progress{
+    width: 200rpx;
+    height: 30rpx;
+    line-height: 30rpx;
+    border-radius: 50rpx;
+    border: 1rpx solid #b5814f;
+    /*background: #e9d9ca;*/
+    text-align: center;
+    color: #b58151;
+    font-size: 19rpx;
+    margin-top: 10rpx;
+    overflow: hidden;
+    position: relative;
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .options .progress .progress-bgc{
+    height:30rpx ;
+    background: #e9d9ca;
+    /*width: 80%;*/
+  }
+  .secondkill .secondkill-ProList .pro-item .pro-ifo .options .progress .progress-size{
+    position: absolute;
+    margin-top: -15%;
+    margin-left: -16%;
+  }
 </style>
 <template>
-  <view>
-    <view>
-      秒杀
+  <view class="secondkill">
+    <view style="width: 100%;height: 105rpx">
+      <view class="secondkill-timeList" scroll-x style="width:{{dataAll.length*190}}rpx">
+        <view @tap="selectTime({{index}})" wx:for="{{dataAll}}"  wx:for-item="item" wx:key="id" wx:for-index="index"  class="timeList-bgc">
+
+          <view class="time-three" id="{{item.select?'select':''}}">
+            <view  class="timeList-item"  style="border-right:{{index==dataAll.length-1 ||item.select || selectIndex-1==index?'none':'1rpx solid #969696'}}">
+              <text class="time" >{{item.time}}</text>
+              <text class="timeTest" >{{item.timeState}}</text>
+            </view>
+          </view>
+          <image wx:if="{{item.select}}" class="arrow_down" src="../../image/icon/arrow_down.png"></image>
+        </view>
+      </view>
+    </view>
+    <view class="secondkill-countdown">
+      {{dataAll[selectIndex].countdown}}
+    </view>
+    <view class="secondkill-ProList">
+      <view class="pro-item"  wx:for="{{dataAll[selectIndex].products}}"  wx:for-item="item" wx:key="id" wx:for-index="index">
+        <image class="img left" @tap="secondkillDetail({{item}})" src="{{item.pic_default_id}}"></image>
+        <view class="pro-ifo left">
+          <text class="title" @tap="secondkillDetail({{item}})">{{item.name}}</text>
+          <view @tap="secondkillDetail({{item}})">
+            <text class="lable-one">限时价<text class="limitPrice">￥{{item.promotion_price}}</text></text>
+            <text class="lable-two">原价<text class="originalPrice">￥{{item.price}}</text></text>
+          </view>
+          <view class="options">
+            <button class="btn right" wx:if="{{dataAll[selectIndex].timeState=='即将开始'}}" @tap="subscribeBtn({{item}})">立即预约</button>
+            <button class="btn right" wx:if="{{dataAll[selectIndex].timeState=='抢购中'}}" @tap="snapUpBtn({{item}})" style="background:{{item.progress=='100%'?'#959595':'#b58151'}}">马上抢</button>
+            <button class="btn right" wx:if="{{dataAll[selectIndex].timeState=='本场已结束'}}" @tap="endBtn({{item}})" style="background:#959595">已结束</button>
+            <view class="progress" wx:if="{{dataAll[selectIndex].timeState=='本场已结束' || dataAll[selectIndex].timeState=='抢购中'}}">
+              <view class="progress-bgc" style="width:{{item.progress}}"></view>
+              <text class="progress-size">已售{{item.progress}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
     </view>
     <tabbar></tabbar>
   </view>
@@ -14,7 +219,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import tabbar from '@/components/tabbar'
-
+  import util from '@/mixins/util'
   export default class secondkill extends wepy.page {
     config = {
       navigationBarTitleText: '秒杀'
@@ -25,16 +230,244 @@
 
     // mixins = [testMixin];
 
-    data = {};
+    data = {
+      intervalTime:{},
+      globalData:wepy.$instance.globalData,
+      selectIndex:null,
+      dataAll:[],//全部数据 时间+商品
+      productList:[],//商品数据
+    };
 
     computed = {};
+    watch = {
+      selectIndex (newValue, oldValue) {
+        //console.log(`num value: ${oldValue} -> ${newValue}`)
+        //this.setCountdown()
+      }
+    }
+    methods = {
+      selectTime(Index){//点击时间
+        if (Index==this.selectIndex){
+          return false
+        }
+        //console.log(Index)
+        this.dataAll.map((item,index) =>{
+          item.select = false
+          if (index==Index) {
+            item.select = true
+            this.selectIndex = index
+          }
+        })
 
-    methods = {};
+        this.setCountdown()
+        this.$apply()
+      },
+      secondkillDetail(item){//详情
+        console.log(item)
+        wepy.navigateTo({
+          url: './secondkillDetails/secondkillDetails?product_id='+item.product_id
+        })
+      },
+      subscribeBtn(item){//立即预约
+        console.log('立即预约')
+        console.log(item)
+        var self = this
+        var publicStr = wepy.$instance.getPublicData()
+        var begintime = this.dataAll[this.selectIndex].begin_time
+        var product_id = item.product_id
+        var url=self.globalData.base_url+self.globalData.version_no+'/member/appointment'+publicStr+'&product_id='+product_id+'&begintime='+begintime
+        console.log(url)
+        wepy.request({
+          url:url,
+          method: "get",
+          header: {
+            "Content-Type": "application/json; charset=UTF-8",  //post
+          },
+          success: function(res) {
+            console.log(res)
+            if (res.data.status=='1') {//预约成功
+              //status_txt
+              wepy.showToast({
+                title: res.data.status_txt,
+                mask:true,
+                icon: 'success',
+                duration: 2000
+              })
+            }else {//预约失败
+              wepy.showToast({
+                title: res.data.status_txt,
+                mask:true,
+                icon: 'success',
+                duration: 2000
+              })
+            }
+          },
+          fail:function(res) {
+            console.log(res)
+          }
+        })
+      },
+      snapUpBtn(item){//抢购
+
+        if (item.progress=='100%') {
+          wepy.showToast({
+            title: '商品已抢完',
+            mask:true,
+            icon: 'success',
+            duration: 2000
+          })
+          return false
+        }
+        console.log(item)
+        wepy.navigateTo({
+          url: './secondkillDetails/secondkillDetails?product_id='+item.product_id
+        })
+        console.log('立即抢购')
+      },
+      endBtn(){
+        wepy.showToast({
+          title: '抢购已结束',
+          mask:true,
+          icon: 'success',
+          duration: 2000
+        })
+      }
+    };
 
     events = {};
+    getTimeList(){
+      wepy.showLoading({
+        title: '加载中',
+        mask:true
+      })
+      console.log('重新获取')
+      var self = this
+      var publicStr = wepy.$instance.getPublicData()
+      var url = self.globalData.base_url+self.globalData.version_no+'/member/combintime'+publicStr
+      wepy.request({
+        url:url,
+        method: "get",
+        header: {
+          "Content-Type": "application/json; charset=UTF-8",  //post
+        },
+        success: function(res) {
+          var timeResults = res.data.results
 
+          if (timeResults.length==0){
+            return false
+          }
+          var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+          //self.countdown = util.formatDuring(currentTime*1000) 倒计时
+          self.dataAll = []
+          timeResults.map((item,index) =>{
+            item.select =false
+            item.begin_time = parseInt(item.begin_time)
+            item.end_time = parseInt(item.end_time)
+            item.begin_timeStr = util.timestampToTime(item.begin_time)
+            item.time = item.begin_timeStr.split(" ")[1]
+            item.end_timeStr = util.timestampToTime(item.end_time)
+            //self.dataAll.push(item)
+            if (currentInterval>item.end_time) {//结束
+              item.timeState='本场已结束'
+            }else if (currentInterval<item.begin_time) {
+              item.timeState='即将开始'
+            }else if (item.end_time>currentInterval && currentInterval>item.begin_time) {
+              item.timeState='抢购中'
+              if (!self.selectIndex) {
+                item.select = true
+                self.selectIndex = index
+              }
+            }
+            //商品信息设置
+            item.products.map((two) =>{
+              two.pic_default_id = self.globalData.base_url+self.globalData.version_no+'/img/'+two.pic_default_id
+              two.promotion_price =util.toDecimal2(two.promotion_price)
+              two.price =util.toDecimal2(two.price)
+              if (item.timeState=='本场已结束'){//默认的
+                two.progress = '100%' //已售
+              }
+              if (item.timeState=='抢购中'){
+                two.progress = '90%' //已售
+              }
+            })
+          })
+          if (!self.selectIndex){//没有抢购中设置第一个为默认显示
+            res.data.results[0].select = true
+            self.selectIndex = 0
+          }else {//倒计时 调用
+            res.data.results[self.selectIndex].select = true
+          }
+          self.dataAll = res.data.results
+          self.setCountdown()//倒计时
+          //self.updateTime()//时间段
+          self.$apply()
+          console.log(timeResults)
+        },
+        fail:function(res) {
+          console.log(res)
+        }
+      })
+      this.$apply()
+    }
+    updateTime(){//更新时间状态  (废弃)
+      var self =this
+      var intervalTime = setInterval(function () {
+        var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+        self.dataAll.map((item,index) =>{
+          if (currentInterval>item.end_time) {//结束
+            item.timeState='本场已结束'
+          }else if (currentInterval<item.begin_time) {
+            item.timeState='即将开始'
+          }else if (item.end_time>currentInterval && currentInterval>item.begin_time) {
+            item.timeState='抢购中'
+          }
+        })
+        //self.$apply();
+        console.log(self.dataAll)
+      }, 60000)
+    }
+    setCountdown(){//设置倒计时
+      var self =this
+      clearInterval(self.intervalTime);
+      if (self.selectIndex==null) {//未有选中的时间段 或 没有抢购中
+        return false
+      }
+        self.intervalTime = setInterval(function () {
+        var item =  self.dataAll[self.selectIndex]
+        var begin_time = item.begin_time //开始时间
+        var end_time = item.end_time
+        var currentInterval = parseInt(Date.parse(new Date()))/1000;//获取当前时间戳
+
+        if (currentInterval>end_time) {//结束
+          item.countdown='本场结束,下次请早'
+          clearInterval(self.intervalTime);
+        }
+        if (currentInterval<begin_time) {
+          var starTime = util.formatDuring((begin_time-currentInterval)*1000)
+          item.countdown = '距离开始时间还有 '+starTime
+          //console.log(starTime)
+         // console.log(currentInterval)
+          if (starTime=='00:35:50') {//即将开始
+            console.log('即将开始-结束')
+            clearInterval(self.intervalTime);
+            self.getTimeList()
+          }
+        }
+        if (end_time>currentInterval && currentInterval>begin_time) {//钱够中
+          var endTime = util.formatDuring((end_time-currentInterval)*1000)
+          item.countdown = '本场还剩 '+endTime
+          if (endTime=='00:00:0') {
+            //console.log('结束')
+            clearInterval(self.intervalTime);
+            //self.getTimeList()
+          }
+        }
+        self.$apply();
+      },1000)
+      wepy.hideLoading()
+    }
     onLoad() {
-
+      this.getTimeList()
     }
   }
 </script>
